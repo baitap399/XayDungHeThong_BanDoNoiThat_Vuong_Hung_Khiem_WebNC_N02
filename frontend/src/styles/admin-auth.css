@@ -1,0 +1,55 @@
+/* Admin login - matches the light original admin UI */
+.admin-login-container{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2rem;
+  background:
+    linear-gradient(180deg, rgba(224,242,254,.65), transparent 340px),
+    #f4f7fb;
+}
+.admin-login-form{
+  width:100%;
+  max-width:420px;
+  padding:2.4rem 2rem;
+  background:#fff;
+  border:1px solid #e8edf5;
+  border-radius:12px;
+  box-shadow:0 14px 34px rgba(15,23,42,.08);
+}
+.admin-login-header{text-align:center;margin-bottom:2rem;}
+.admin-login-header h1{font-family:Inter,sans-serif;font-size:1.65rem;color:#172033;margin:0 0 .35rem;}
+.admin-login-header h2{font-family:Inter,sans-serif;font-size:.95rem;color:#64748b;}
+.admin-login-header .admin-logo-mark{display:none;}
+.admin-form-group{display:block;margin-bottom:1.2rem;color:#1a2340;font-size:.78rem;font-weight:700;}
+.admin-form-group input{
+  display:block;
+  width:100%;
+  margin-top:.45rem;
+  padding:.78rem .9rem;
+  border:1px solid #dbe3ef;
+  border-radius:8px;
+  background:#fff;
+  color:#172033;
+  outline:none;
+}
+.admin-form-group input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.08);}
+.admin-btn-login{
+  width:100%;
+  margin-top:.35rem;
+  padding:.82rem;
+  border:0;
+  border-radius:8px;
+  background:linear-gradient(135deg,#2563eb,#14b8a6);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+.admin-btn-login:hover{box-shadow:0 8px 20px rgba(37,99,235,.18);transform:translateY(-1px);}
+.admin-error-msg{padding:.8rem 1rem;border-radius:8px;margin-bottom:1rem;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;font-size:.86rem;}
+.admin-back-link{margin-top:1rem;text-align:center;color:#64748b;font-size:.82rem;}
+.admin-back-link a{color:#2563eb;}
+.admin-role-badge{display:inline-block;padding:5px 11px;border-radius:999px;background:#eef6f4;color:#0f6656;font-size:12px;font-weight:800;letter-spacing:.08em;margin-bottom:16px}
+.admin-login-header p{margin:.55rem 0 0;color:#8a95b0;font-size:.9rem}
+.admin-form-group input::placeholder{color:#9aa4b5}
