@@ -1,3 +1,4 @@
+// file cấu hình chiến lược xác thực jwt để kiểm tra token và lấy thông tin người dùng.
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';

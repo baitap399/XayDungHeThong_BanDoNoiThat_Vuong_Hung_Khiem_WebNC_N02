@@ -1,3 +1,4 @@
+// file khai báo các api endpoint của chức năng auth và nhận request từ frontend.
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';

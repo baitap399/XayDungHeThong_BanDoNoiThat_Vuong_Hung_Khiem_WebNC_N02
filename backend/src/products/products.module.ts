@@ -1,3 +1,4 @@
+// file cấu hình module products, gồm controller, service và các dependency liên quan.
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from '../database/entities/product.entity';

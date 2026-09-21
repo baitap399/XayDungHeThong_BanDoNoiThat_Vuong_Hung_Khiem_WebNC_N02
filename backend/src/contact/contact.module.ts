@@ -1,3 +1,4 @@
+// file cấu hình module contact, gồm controller, service và các dependency liên quan.
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ContactMessage } from '../database/entities/contact-message.entity';

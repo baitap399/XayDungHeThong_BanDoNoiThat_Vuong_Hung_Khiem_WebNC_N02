@@ -1,3 +1,4 @@
+// file tập trung các hàm gọi api cho các chức năng của ứng dụng.
 import { api } from './client';
 import type { Cart, ContactMessage, DashboardData, Order, Product, User } from './types';
 

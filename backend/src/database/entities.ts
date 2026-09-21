@@ -1,3 +1,4 @@
+// file gom và export các entity của database để sử dụng tập trung.
 import {
   Cart,
   CartItem,

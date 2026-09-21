@@ -1,3 +1,4 @@
+// file là trang productlist của giao diện người dùng.
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { productApi } from '../api/services';

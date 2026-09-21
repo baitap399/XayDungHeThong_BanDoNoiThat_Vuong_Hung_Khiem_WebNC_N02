@@ -1,3 +1,4 @@
+// file định nghĩa layout user dùng để tạo khung giao diện chung cho các trang.
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';

@@ -1,3 +1,4 @@
+// file là trang home của giao diện người dùng.
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { productApi } from '../api/services';

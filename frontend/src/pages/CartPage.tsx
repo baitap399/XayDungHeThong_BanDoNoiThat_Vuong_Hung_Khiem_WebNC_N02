@@ -1,3 +1,4 @@
+// file là trang cart của giao diện người dùng.
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { formatVnd, imageUrl } from '../api/client';

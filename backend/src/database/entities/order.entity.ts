@@ -1,3 +1,4 @@
+// file định nghĩa entity order và ánh xạ dữ liệu của entity này với bảng trong database.
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { OrderStatus, PaymentMethod, PaymentStatus } from './enums';
 import { User } from './user.entity';

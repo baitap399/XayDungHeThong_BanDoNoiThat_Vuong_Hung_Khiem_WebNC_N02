@@ -1,3 +1,4 @@
+// file là trang orderdetail của giao diện người dùng.
 import { useEffect, useState } from 'react';
 import { ArrowLeft, MapPin, PackageCheck } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';

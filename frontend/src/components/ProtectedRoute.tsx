@@ -1,3 +1,4 @@
+// file là component react dùng để tái sử dụng phần giao diện hoặc logic liên quan.
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 

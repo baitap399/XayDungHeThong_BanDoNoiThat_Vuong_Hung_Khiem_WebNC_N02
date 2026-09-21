@@ -1,3 +1,4 @@
+// file là component gốc của frontend và cấu hình routing cho toàn bộ ứng dụng.
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Toast } from './components/Toast';
 import { ProtectedRoute } from './components/ProtectedRoute';

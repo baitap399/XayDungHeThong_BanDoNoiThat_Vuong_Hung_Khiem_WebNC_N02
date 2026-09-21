@@ -1,3 +1,4 @@
+// file cấu hình module admin, gồm controller, service và các dependency liên quan.
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../database/entities/user.entity';

@@ -1,3 +1,4 @@
+// file là trang register của giao diện người dùng.
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';

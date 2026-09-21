@@ -1,3 +1,4 @@
+// file khai báo các api endpoint của chức năng cart và nhận request từ frontend.
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { IsInt, Min } from 'class-validator';
 import { Type } from 'class-transformer';

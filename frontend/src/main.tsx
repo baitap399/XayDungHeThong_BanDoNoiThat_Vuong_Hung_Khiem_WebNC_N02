@@ -1,3 +1,4 @@
+// file là điểm khởi chạy của frontend react và render component app vào trang html.
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';

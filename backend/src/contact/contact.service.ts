@@ -1,3 +1,4 @@
+// file chứa logic xử lý nghiệp vụ của chức năng contact và làm việc với database khi cần.
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

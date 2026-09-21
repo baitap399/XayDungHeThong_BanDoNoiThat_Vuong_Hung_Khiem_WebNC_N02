@@ -1,3 +1,4 @@
+// file cấu hình module database, gồm controller, service và các dependency liên quan.
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';

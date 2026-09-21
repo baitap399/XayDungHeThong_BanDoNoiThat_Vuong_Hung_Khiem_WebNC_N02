@@ -1,3 +1,4 @@
+// file gom và export các entity để các module khác có thể import thuận tiện.
 export * from './enums';
 export * from './user.entity';
 export * from './product.entity';

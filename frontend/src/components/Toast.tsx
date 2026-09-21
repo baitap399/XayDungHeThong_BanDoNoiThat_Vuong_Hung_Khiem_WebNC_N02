@@ -1,3 +1,4 @@
+// file hiển thị thông báo ngắn cho người dùng trên giao diện.
 import { useEffect, useState } from 'react';
 
 export function Toast() {

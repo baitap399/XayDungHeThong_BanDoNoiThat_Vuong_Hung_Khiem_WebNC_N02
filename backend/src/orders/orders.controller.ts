@@ -1,3 +1,4 @@
+// file khai báo các api endpoint của chức năng orders và nhận request từ frontend.
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Roles } from '../common/decorators/roles.decorator';

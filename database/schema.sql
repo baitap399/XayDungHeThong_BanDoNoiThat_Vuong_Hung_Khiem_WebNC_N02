@@ -1,3 +1,4 @@
+-- file chứa cấu trúc database sql gồm các bảng, khóa và dữ liệu khởi tạo cần thiết.
 -- ==========================================
 -- TẠO DATABASE
 -- ==========================================

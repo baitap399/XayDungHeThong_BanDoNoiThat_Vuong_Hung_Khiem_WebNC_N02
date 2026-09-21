@@ -1,3 +1,4 @@
+// file cấu hình module auth, gồm controller, service và các dependency liên quan.
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtSignOptions } from '@nestjs/jwt';

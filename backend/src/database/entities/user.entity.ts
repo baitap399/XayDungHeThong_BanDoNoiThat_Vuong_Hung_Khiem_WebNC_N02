@@ -1,3 +1,4 @@
+// file định nghĩa entity user và ánh xạ dữ liệu của entity này với bảng trong database.
 import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Cart } from './cart.entity';
 import { UserRole } from './enums';

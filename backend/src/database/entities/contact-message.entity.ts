@@ -1,3 +1,4 @@
+// file định nghĩa entity contact-message và ánh xạ dữ liệu của entity này với bảng trong database.
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('contact_messages')

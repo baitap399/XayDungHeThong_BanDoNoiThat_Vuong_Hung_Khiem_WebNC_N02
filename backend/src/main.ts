@@ -1,3 +1,4 @@
+// file là điểm khởi chạy của backend nestjs và cấu hình server http.
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { mkdirSync } from 'fs';

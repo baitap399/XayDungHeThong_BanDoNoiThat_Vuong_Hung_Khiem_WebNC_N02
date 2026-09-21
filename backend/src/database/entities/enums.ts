@@ -1,3 +1,4 @@
+// file khai báo các enum dùng chung cho dữ liệu và nghiệp vụ của database.
 export enum UserRole {
   USER = 'USER',
   ADMIN = 'ADMIN',

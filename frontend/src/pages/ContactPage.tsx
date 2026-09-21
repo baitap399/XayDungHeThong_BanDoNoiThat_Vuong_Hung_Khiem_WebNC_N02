@@ -1,3 +1,4 @@
+// file là trang contact của giao diện người dùng.
 import { FormEvent, useState } from 'react';
 import { contactApi } from '../api/services';
 export function ContactPage(){const [form,setForm]=useState({name:'',email:'',phone:'',message:''});const [sent,setSent]=useState(false);const [error,setError]=useState('');const submit=async(e:FormEvent)=>{e.preventDefault();setError('');try{await contactApi.create(form);setSent(true);setForm({name:'',email:'',phone:'',message:''})}catch{setError('Không thể gửi tin nhắn. Vui lòng thử lại.')}};return <>

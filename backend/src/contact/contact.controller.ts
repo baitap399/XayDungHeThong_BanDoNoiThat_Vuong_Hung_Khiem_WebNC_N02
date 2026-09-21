@@ -1,3 +1,4 @@
+// file khai báo các api endpoint của chức năng contact và nhận request từ frontend.
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';

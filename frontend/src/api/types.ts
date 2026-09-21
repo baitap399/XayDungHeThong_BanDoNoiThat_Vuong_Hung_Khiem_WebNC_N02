@@ -1,3 +1,4 @@
+// file định nghĩa các kiểu dữ liệu typescript dùng khi làm việc với api.
 
 export interface DashboardData {
   revenue: number;

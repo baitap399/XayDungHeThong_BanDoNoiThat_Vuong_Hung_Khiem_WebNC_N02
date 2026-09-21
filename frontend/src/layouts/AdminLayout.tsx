@@ -1,3 +1,4 @@
+// file định nghĩa layout admin dùng để tạo khung giao diện chung cho các trang.
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { BarChart3, Boxes, FileText, LayoutDashboard, LogOut, Mail, ShoppingBag, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';

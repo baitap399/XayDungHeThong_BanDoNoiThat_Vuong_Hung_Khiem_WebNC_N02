@@ -1,3 +1,4 @@
+// file chứa mã nguồn phục vụ chức năng AuthContext của dự án.
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { authApi } from '../api/services';
 import type { User } from '../api/types';

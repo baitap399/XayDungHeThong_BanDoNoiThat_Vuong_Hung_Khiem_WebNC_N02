@@ -1,3 +1,4 @@
+// file là module gốc của backend và kết nối các module chức năng của hệ thống.
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';

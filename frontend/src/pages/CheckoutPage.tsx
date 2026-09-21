@@ -1,3 +1,4 @@
+// file là trang checkout của giao diện người dùng.
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { formatVnd, imageUrl } from '../api/client';

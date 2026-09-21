@@ -1,3 +1,4 @@
+// file định nghĩa entity cart-item và ánh xạ dữ liệu của entity này với bảng trong database.
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Cart } from './cart.entity';
 import { Product } from './product.entity';

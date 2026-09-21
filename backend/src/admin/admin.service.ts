@@ -1,3 +1,4 @@
+// file chứa logic xử lý nghiệp vụ của chức năng admin và làm việc với database khi cần.
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

@@ -1,3 +1,4 @@
+// file chứa mã nguồn phục vụ chức năng CartContext của dự án.
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { cartApi } from '../api/services';
 import type { Cart } from '../api/types';

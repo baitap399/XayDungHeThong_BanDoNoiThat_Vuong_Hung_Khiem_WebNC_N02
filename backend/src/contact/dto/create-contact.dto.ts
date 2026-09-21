@@ -1,3 +1,4 @@
+// file định nghĩa và kiểm tra dữ liệu đầu vào cho chức năng create-contact.
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateContactDto {

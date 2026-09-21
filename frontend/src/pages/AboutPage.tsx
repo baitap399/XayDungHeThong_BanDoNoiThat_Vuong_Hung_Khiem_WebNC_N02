@@ -1,3 +1,4 @@
+// file là trang about của giao diện người dùng.
 import { Link } from 'react-router-dom';
 export function AboutPage(){return <>
 <section className="page-hero"><span className="eyebrow dark">About Hung Gia dụng</span><h1>Cửa hàng gia dụng dành cho gia đình cần sản phẩm tiện ích, bền và dễ sử dụng</h1><p>Hung Gia dụng Shop tập trung vào đồ gia dụng, linh kiện và phụ kiện điện tử chính hãng. Giao diện mua sắm được thiết kế rõ ràng để khách chọn nhanh, so sánh dễ và đặt hàng tự tin.</p></section>

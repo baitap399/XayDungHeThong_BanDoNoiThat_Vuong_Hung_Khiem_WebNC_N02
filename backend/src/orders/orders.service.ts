@@ -1,3 +1,4 @@
+// file chứa logic xử lý nghiệp vụ của chức năng orders và làm việc với database khi cần.
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';

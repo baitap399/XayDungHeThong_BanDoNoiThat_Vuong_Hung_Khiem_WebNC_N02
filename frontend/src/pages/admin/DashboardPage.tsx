@@ -1,3 +1,4 @@
+// file là trang quản trị dashboard dành cho khu vực admin.
 import { useEffect, useMemo, useState } from 'react';
 import { BarChart3, Boxes, CalendarDays, Clock3, DollarSign, PieChart, Receipt, TrendingUp, Users } from 'lucide-react';
 import { formatVnd } from '../../api/client';

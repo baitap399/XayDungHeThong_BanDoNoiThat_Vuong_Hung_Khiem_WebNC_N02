@@ -1,3 +1,4 @@
+// file là trang productdetail của giao diện người dùng.
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { productApi } from '../api/services';

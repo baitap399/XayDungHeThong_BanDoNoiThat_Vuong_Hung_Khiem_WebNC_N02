@@ -1,3 +1,4 @@
+// file chứa logic xử lý nghiệp vụ của chức năng cart và làm việc với database khi cần.
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

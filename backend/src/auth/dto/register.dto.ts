@@ -1,3 +1,4 @@
+// file định nghĩa và kiểm tra dữ liệu đầu vào cho chức năng register.
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class RegisterDto {

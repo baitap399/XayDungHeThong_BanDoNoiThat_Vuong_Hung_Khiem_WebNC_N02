@@ -1,3 +1,4 @@
+// file chứa logic xử lý nghiệp vụ của chức năng auth và làm việc với database khi cần.
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';

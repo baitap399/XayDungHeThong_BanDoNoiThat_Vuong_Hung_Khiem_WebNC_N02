@@ -1,3 +1,4 @@
+// file hiển thị thông tin một sản phẩm dưới dạng thẻ trong giao diện.
 import { Link } from 'react-router-dom';
 import { imageUrl, formatVnd } from '../api/client';
 import type { Product } from '../api/types';

@@ -1,3 +1,4 @@
+// file là trang quản trị revenueadmin dành cho khu vực admin.
 import { useEffect, useMemo, useState } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { formatVnd } from '../../api/client';

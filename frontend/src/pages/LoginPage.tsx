@@ -1,3 +1,4 @@
+// file là trang login của giao diện người dùng.
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';

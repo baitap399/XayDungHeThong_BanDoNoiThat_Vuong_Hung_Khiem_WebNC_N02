@@ -1,3 +1,4 @@
+// file là trang quản trị productadmin dành cho khu vực admin.
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Edit3, Plus, Save, Trash2, X } from 'lucide-react';
 import { imageUrl, formatVnd } from '../../api/client';

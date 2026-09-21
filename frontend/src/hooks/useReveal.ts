@@ -1,3 +1,4 @@
+// file chứa custom hook dùng để tái sử dụng logic trên các component react.
 import { useEffect } from 'react';
 
 const REVEAL_SELECTOR = '.reveal, .reveal-left, .reveal-right';

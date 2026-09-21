@@ -1,3 +1,4 @@
+// file định nghĩa và kiểm tra dữ liệu đầu vào cho chức năng create-product.
 import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 

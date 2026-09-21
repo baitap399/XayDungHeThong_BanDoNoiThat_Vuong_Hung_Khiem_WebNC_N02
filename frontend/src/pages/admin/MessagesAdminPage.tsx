@@ -1,3 +1,4 @@
+// file là trang quản trị messagesadmin dành cho khu vực admin.
 import { useEffect, useState } from 'react';
 import { Check, MailOpen, Trash2 } from 'lucide-react';
 import { contactApi } from '../../api/services';
