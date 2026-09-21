@@ -11,11 +11,18 @@ import { entities } from './entities';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        host: config.get<string>('DB_HOST', 'localhost'),
-        port: Number(config.get<string>('DB_PORT', '3306')),
-        username: config.get<string>('DB_USERNAME', 'root'),
-        password: config.get<string>('DB_PASSWORD', ''),
-        database: config.get<string>('DB_NAME', 'giadung_shop'),
+
+        host: config.get<string>('DB_HOST'),
+        port: Number(config.get<string>('DB_PORT')),
+        username: config.get<string>('DB_USERNAME'),
+        password: config.get<string>('DB_PASSWORD'),
+        database: config.get<string>('DB_NAME'),
+
+        // Kết nối SSL tới Aiven MySQL
+        ssl: {
+          rejectUnauthorized: false,
+        },
+
         entities,
         synchronize: false,
         charset: 'utf8mb4',
