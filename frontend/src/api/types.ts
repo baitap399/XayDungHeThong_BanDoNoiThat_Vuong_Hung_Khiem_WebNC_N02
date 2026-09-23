@@ -51,7 +51,7 @@ export interface Cart {
 }
 
 export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'DELIVERED' | 'CANCELLED';
-export type PaymentMethod = 'QR' | 'CARD' | 'CASH';
+export type PaymentMethod = 'QR' | 'CARD' | 'CASH' | 'PAYOS';
 
 export interface OrderItem {
   id: number;

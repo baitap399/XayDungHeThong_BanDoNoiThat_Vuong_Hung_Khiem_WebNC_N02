@@ -40,6 +40,10 @@ export const orderApi = {
   users: () => api.get<User[]>('/admin/users'),
 };
 
+export const paymentApi = {
+  createPayOSPaymentLink: (orderId: number) => api.post<{ checkoutUrl: string }>(`/payment/payos/create-link/${orderId}`),
+};
+
 export const contactApi = {
   create: (data: { name: string; email: string; phone?: string; message: string }) => api.post('/contact', data),
   adminList: () => api.get<ContactMessage[]>('/contact/admin'),
