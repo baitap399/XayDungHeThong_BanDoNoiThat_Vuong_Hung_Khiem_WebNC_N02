@@ -6,13 +6,16 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Cart } from '../database/entities/cart.entity';
 import { User } from '../database/entities/user.entity';
+import { PasswordResetToken } from '../database/entities/password-reset-token.entity';
+import { EmailModule } from '../email/email.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Cart]),
+    TypeOrmModule.forFeature([User, Cart, PasswordResetToken]),
+    EmailModule,
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({

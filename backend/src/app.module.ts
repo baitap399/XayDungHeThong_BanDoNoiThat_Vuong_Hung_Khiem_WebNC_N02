@@ -11,6 +11,7 @@ import { DatabaseModule } from './database/database.module';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { CouponsModule } from './coupon/coupons.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CouponsModule } from './coupon/coupons.module';
     ContactModule,
     AdminModule,
     CouponsModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

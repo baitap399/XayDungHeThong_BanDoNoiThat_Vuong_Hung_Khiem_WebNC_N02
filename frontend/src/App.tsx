@@ -16,6 +16,9 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ProductListPage } from './pages/ProductListPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { SuccessPage } from './pages/SuccessPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { VerifyOtpPage } from './pages/VerifyOtpPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { AdminDashboardPage } from './pages/admin/DashboardPage';
 import { MessagesAdminPage } from './pages/admin/MessagesAdminPage';
 import { OrdersAdminPage } from './pages/admin/OrdersAdminPage';
@@ -45,6 +48,9 @@ export function App() {
         <Route path="contact" element={<ContactPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="verify-otp" element={<VerifyOtpPage />} />
+        <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="cart" element={<CartPage />} />
           <Route path="checkout" element={<CheckoutPage />} />

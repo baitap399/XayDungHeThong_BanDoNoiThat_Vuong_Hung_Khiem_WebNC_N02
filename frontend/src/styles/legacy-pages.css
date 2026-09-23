@@ -577,6 +577,35 @@
       font-size: 14px;
     }
     .auth-footer a { color: var(--brand); font-weight: 800; }
+
+    .form-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 7px;
+    }
+    .form-label-row label { margin-bottom: 0; }
+    .form-label-row a { color: var(--brand); font-size: .88rem; font-weight: 800; }
+    .otp-input { text-align: center; font-size: 1.35rem !important; font-weight: 800; letter-spacing: .45rem; }
+    .otp-countdown {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid #b7d6cc;
+      border-radius: 8px;
+      background: #edf8f4;
+      color: var(--brand);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .otp-countdown.expired {
+      border-color: #efc2c2;
+      background: #fff1f1;
+      color: #c62828;
+    }
   
 
 
