@@ -1,12 +1,15 @@
 // file chứa logic xử lý nghiệp vụ của chức năng auth và làm việc với database khi cần.
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
-import { Repository } from 'typeorm';
+import { randomInt } from 'crypto';
+import { IsNull, Repository } from 'typeorm';
 import { Cart } from '../database/entities/cart.entity';
 import { UserRole } from '../database/entities/enums';
 import { User } from '../database/entities/user.entity';
+import { PasswordResetToken } from '../database/entities/password-reset-token.entity';
+import { EmailService } from '../email/email.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
@@ -15,7 +18,9 @@ export class AuthService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
     @InjectRepository(Cart) private readonly carts: Repository<Cart>,
+    @InjectRepository(PasswordResetToken) private readonly resetTokens: Repository<PasswordResetToken>,
     private readonly jwt: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -50,6 +55,67 @@ export class AuthService {
   async getProfile(userId: number) {
     const user = await this.users.findOneByOrFail({ id: userId });
     return this.publicUser(user);
+  }
+
+  async forgotPassword(rawEmail: string) {
+    const email = rawEmail.trim().toLowerCase();
+    const user = await this.users.findOne({ where: { email } });
+    if (!user) throw new NotFoundException('Email này chưa được đăng ký');
+
+    await this.resetTokens.update({ userId: user.id, usedAt: IsNull() }, { usedAt: new Date() });
+    const otp = randomInt(100000, 1000000).toString();
+    const token = await this.resetTokens.save(this.resetTokens.create({
+      userId: user.id,
+      otpHash: await bcrypt.hash(otp, 10),
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      verifiedAt: null,
+      usedAt: null,
+    }));
+
+    try {
+      await this.emailService.sendPasswordResetOtp(user.email, otp);
+    } catch (error) {
+      await this.resetTokens.delete(token.id);
+      throw error;
+    }
+    return {
+      message: 'Mã OTP đã được gửi đến email của bạn.',
+      expiresAt: token.expiresAt.toISOString(),
+    };
+  }
+
+  async verifyResetOtp(rawEmail: string, otp: string) {
+    const { token } = await this.getValidResetToken(rawEmail, otp);
+    token.verifiedAt = new Date();
+    await this.resetTokens.save(token);
+    return { message: 'Xác thực OTP thành công.' };
+  }
+
+  async resetPassword(rawEmail: string, otp: string, newPassword: string) {
+    const { user, token } = await this.getValidResetToken(rawEmail, otp);
+    if (!token.verifiedAt) throw new BadRequestException('OTP chưa được xác thực');
+
+    await this.resetTokens.manager.transaction(async (manager) => {
+      user.password = await bcrypt.hash(newPassword, 10);
+      await manager.save(user);
+      await manager.update(PasswordResetToken, { userId: user.id, usedAt: IsNull() }, { usedAt: new Date() });
+    });
+    return { message: 'Đổi mật khẩu thành công.' };
+  }
+
+  private async getValidResetToken(rawEmail: string, otp: string) {
+    const email = rawEmail.trim().toLowerCase();
+    const user = await this.users.findOne({ where: { email } });
+    if (!user) throw new BadRequestException('Email hoặc OTP không hợp lệ');
+
+    const token = await this.resetTokens.findOne({
+      where: { userId: user.id, usedAt: IsNull() },
+      order: { createdAt: 'DESC' },
+    });
+    if (!token || token.expiresAt.getTime() <= Date.now() || !(await bcrypt.compare(otp, token.otpHash))) {
+      throw new BadRequestException('OTP không hợp lệ hoặc đã hết hạn');
+    }
+    return { user, token };
   }
 
   private loginUser(user: User) {

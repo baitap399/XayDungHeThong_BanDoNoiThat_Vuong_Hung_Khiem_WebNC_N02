@@ -7,7 +7,8 @@ import {
   OrderItem,
   Payment,
   Product,
+  PasswordResetToken,
   User,
 } from './entities/index';
 
-export const entities = [User, Product, Cart, CartItem, Order, OrderItem, Payment, ContactMessage];
+export const entities = [User, Product, Cart, CartItem, Order, OrderItem, Payment, ContactMessage, PasswordResetToken];

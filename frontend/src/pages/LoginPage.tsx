@@ -7,6 +7,7 @@ export function LoginPage({ admin = false }: { admin?: boolean }) {
   const { login, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const successMessage = (location.state as {message?: string} | null)?.message;
   const [loginId,setLoginId]=useState(''); const [password,setPassword]=useState(''); const [error,setError]=useState(''); const [busy,setBusy]=useState(false); const [show,setShow]=useState(false);
 
   useEffect(()=>{ if(admin) return; const t=window.setTimeout(()=>{},0); return ()=>window.clearTimeout(t); },[admin]);
@@ -18,9 +19,10 @@ export function LoginPage({ admin = false }: { admin?: boolean }) {
   return <section className="auth-container">
     <form className="auth-form" onSubmit={submit} autoComplete="on">
       <div className="auth-header"><h1><i className="fa-solid fa-right-to-bracket" /> Đăng nhập</h1><p>Chào mừng bạn quay lại Hung Gia dụng Shop.</p></div>
+      {successMessage&&<div className="auth-message success">{successMessage}</div>}
       {error&&<div className="auth-message error">{error}</div>}
       <div className="form-group"><label htmlFor="loginId">Tên đăng nhập hoặc email</label><input id="loginId" value={loginId} onChange={e=>setLoginId(e.target.value)} placeholder="username hoặc your@email.com" required autoComplete="username" /></div>
-      <div className="form-group"><label htmlFor="password">Mật khẩu</label><div className="password-field"><input id="password" type={show?'text':'password'} value={password} onChange={e=>setPassword(e.target.value)} placeholder="******" required autoComplete="current-password" /><button type="button" className="password-toggle" onClick={()=>setShow(v=>!v)} aria-label={show?'Ẩn mật khẩu':'Hiện mật khẩu'}><i className={`fa-solid ${show?'fa-eye-slash':'fa-eye'}`} /></button></div></div>
+      <div className="form-group"><div className="form-label-row"><label htmlFor="password">Mật khẩu</label><Link to="/forgot-password">Quên mật khẩu?</Link></div><div className="password-field"><input id="password" type={show?'text':'password'} value={password} onChange={e=>setPassword(e.target.value)} placeholder="******" required autoComplete="current-password" /><button type="button" className="password-toggle" onClick={()=>setShow(v=>!v)} aria-label={show?'Ẩn mật khẩu':'Hiện mật khẩu'}><i className={`fa-solid ${show?'fa-eye-slash':'fa-eye'}`} /></button></div></div>
       <button type="submit" className="btn btn-primary btn-wide" disabled={busy}><i className="fa-solid fa-right-to-bracket" /> {busy?'Đang xử lý...':'Đăng nhập'}</button>
       <div className="auth-footer">Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link></div>
     </form>

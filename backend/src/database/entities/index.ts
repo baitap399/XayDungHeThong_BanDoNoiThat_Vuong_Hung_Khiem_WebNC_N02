@@ -8,3 +8,4 @@ export * from './order.entity';
 export * from './order-item.entity';
 export * from './payment.entity';
 export * from './contact-message.entity';
+export * from './password-reset-token.entity';
