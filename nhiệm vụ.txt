@@ -1,0 +1,13 @@
+Ae làm xem xong làm theo mấy cái này nha ( làm xong thì xóa )
+- fix lỗi biểu đồ
+- làm trang cá nhân:
+    + đổi mật khẩu, hoặc thông tin tài khoản
+    + địa chỉ riêng từng tài khoản
+    + mã giảm giá
+    + đánh giá
+    + sản phẩm yêu thích
+    + ......
+- làm lại phần thanh toán 
+- AI chatbot
+- đổi lại ảnh cho sản phẩm
+- fix lại 1 vài text và vị trí nút bị lệch (xem trực tiếp trên web)
