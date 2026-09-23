@@ -15,6 +15,7 @@ export enum PaymentMethod {
   QR = 'QR',
   CARD = 'CARD',
   CASH = 'CASH',
+  PAYOS = 'PAYOS',
 }
 
 export enum PaymentStatus {

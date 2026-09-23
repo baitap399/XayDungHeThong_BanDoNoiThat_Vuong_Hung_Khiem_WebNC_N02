@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { entities } from './entities';
-import { CreatePasswordResetTokens1730000000000 } from './migrations/1730000000000-CreatePasswordResetTokens';
 
 @Module({
   imports: [
@@ -25,9 +24,7 @@ import { CreatePasswordResetTokens1730000000000 } from './migrations/17300000000
         },
 
         entities,
-        migrations: [CreatePasswordResetTokens1730000000000],
-        migrationsRun: true,
-        synchronize: false,
+        synchronize: true,
         charset: 'utf8mb4',
         supportBigNumbers: true,
         bigNumberStrings: false,

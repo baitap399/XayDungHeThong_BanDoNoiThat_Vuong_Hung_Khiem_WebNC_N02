@@ -41,7 +41,12 @@ export class OrdersService {
         total += Number(item.product.price) * item.quantity;
       }
  
-      const isCash = dto.paymentMethod === PaymentMethod.CASH;
+      const productRepo = manager.getRepository(Product);
+      for (const item of cartItems) {
+        item.product.stock -= item.quantity;
+        await productRepo.save(item.product);
+      }
+
       const order = manager.create(Order, {
         userId,
         fullName: dto.fullName,
@@ -51,7 +56,7 @@ export class OrdersService {
         totalAmount: String(total),
         status: OrderStatus.PENDING,
         paymentMethod: dto.paymentMethod,
-        paymentStatus: isCash ? PaymentStatus.UNPAID : PaymentStatus.PAID,
+        paymentStatus: PaymentStatus.UNPAID,
         note: dto.note ?? null,
       });
       const savedOrder = await manager.save(Order, order);
@@ -71,9 +76,9 @@ export class OrdersService {
         orderId: savedOrder.id,
         method: dto.paymentMethod,
         amount: String(total),
-        status: isCash ? PaymentRecordStatus.PENDING : PaymentRecordStatus.SUCCESS,
-        transactionId: isCash ? null : `OFFLINE-${savedOrder.id}`,
-        paidAt: isCash ? null : new Date(),
+        status: PaymentRecordStatus.PENDING,
+        transactionId: null,
+        paidAt: null,
       });
       await manager.save(Payment, payment);
       await manager.getRepository(CartItem).delete({ cartId: cart.id });

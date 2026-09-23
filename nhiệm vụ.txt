@@ -7,7 +7,7 @@ Ae làm xem xong làm theo mấy cái này nha ( làm xong thì xóa )
     + đánh giá
     + sản phẩm yêu thích
     + ......
-- làm lại phần thanh toán 
+- làm lại phần thanh toán ( đã kết nối với phương thức thanh toán thực tế, còn cần chỉnh lại giao diện và 1 vài bug nhỏ )
 - AI chatbot
 - đổi lại ảnh cho sản phẩm, và thêm sản phẩm mới.
 - fix lại 1 vài text và vị trí nút bị lệch (xem trực tiếp trên web)
