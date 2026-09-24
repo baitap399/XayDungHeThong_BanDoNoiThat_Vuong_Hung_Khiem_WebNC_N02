@@ -24,6 +24,21 @@ CREATE TABLE IF NOT EXISTS users (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ==========================================
+-- BANG USER_ADDRESSES
+-- ==========================================
+CREATE TABLE IF NOT EXISTS user_addresses (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    full_name   VARCHAR(100) NOT NULL,
+    phone       VARCHAR(15) NOT NULL,
+    address     TEXT NOT NULL,
+    is_default  BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ==========================================
 -- BẢNG CONTACT_MESSAGES (tin nhắn liên hệ)
 -- ==========================================
 CREATE TABLE IF NOT EXISTS contact_messages (
@@ -53,6 +68,19 @@ CREATE TABLE IF NOT EXISTS products (
     is_featured     BOOLEAN DEFAULT FALSE,        -- sản phẩm nổi bật trang chủ
     created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ==========================================
+-- BANG FAVORITES
+-- ==========================================
+CREATE TABLE IF NOT EXISTS favorites (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    product_id  BIGINT NOT NULL,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_favorite_user_product (user_id, product_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ==========================================

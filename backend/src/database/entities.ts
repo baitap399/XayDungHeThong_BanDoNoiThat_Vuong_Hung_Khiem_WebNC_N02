@@ -3,12 +3,14 @@ import {
   Cart,
   CartItem,
   ContactMessage,
+  Favorite,
   Order,
   OrderItem,
   Payment,
   Product,
   PasswordResetToken,
   User,
+  UserAddress,
 } from './entities/index';
 
-export const entities = [User, Product, Cart, CartItem, Order, OrderItem, Payment, ContactMessage, PasswordResetToken];
+export const entities = [User, Product, Cart, CartItem, Order, OrderItem, Payment, ContactMessage, PasswordResetToken, UserAddress, Favorite];
