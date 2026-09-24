@@ -1,6 +1,6 @@
 // file tập trung các hàm gọi api cho các chức năng của ứng dụng.
 import { api } from './client';
-import type { Cart, ContactMessage, DashboardData, Order, Product, User } from './types';
+import type { Cart, ContactMessage, Coupon, DashboardData, Favorite, Order, Product, User, UserAddress } from './types';
 
 export const authApi = {
   login: (data: { usernameOrEmail: string; password: string }) => api.post<{ accessToken: string; user: User }>('/auth/login', data),
@@ -8,6 +8,7 @@ export const authApi = {
   forgotPassword: (email: string) => api.post<{ message: string; expiresAt: string }>('/auth/forgot-password', { email }),
   verifyResetOtp: (email: string, otp: string) => api.post<{ message: string }>('/auth/verify-reset-otp', { email, otp }),
   resetPassword: (email: string, otp: string, newPassword: string) => api.post<{ message: string }>('/auth/reset-password', { email, otp, newPassword }),
+  changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) => api.post<{ message: string }>('/auth/change-password', { currentPassword, newPassword, confirmPassword }),
   me: () => api.get<User>('/auth/me'),
 };
 
@@ -38,6 +39,20 @@ export const orderApi = {
   dashboard: () => api.get<DashboardData>('/admin/dashboard'),
   revenue: () => api.get<Array<{ period: string; orders: number; revenue: number }>>('/admin/revenue'),
   users: () => api.get<User[]>('/admin/users'),
+};
+
+export const favoriteApi = {
+  list: () => api.get<Favorite[]>('/favorites'),
+  add: (productId: number) => api.post<Favorite>(`/favorites/${productId}`),
+  remove: (productId: number) => api.delete(`/favorites/${productId}`),
+};
+
+export const addressApi = {
+  list: () => api.get<UserAddress[]>('/addresses'),
+};
+
+export const couponApi = {
+  list: () => api.get<Coupon[]>('/coupons'),
 };
 
 export const paymentApi = {
