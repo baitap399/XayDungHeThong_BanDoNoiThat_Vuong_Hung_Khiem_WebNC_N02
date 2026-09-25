@@ -1,0 +1,127 @@
+cấu trúc thư mục dự án gia-dung-react-nest
+
+gia-dung-react-nest/
+├── backend — backend xử lý api, nghiệp vụ và kết nối cơ sở dữ liệu
+│   ├── src — mã nguồn chính của nestjs backend
+│   │   ├── admin — các chức năng dành cho quản trị viên
+│   │   │   ├── admin.controller.ts
+│   │   │   ├── admin.module.ts
+│   │   │   └── admin.service.ts
+│   │   ├── auth — các thành phần đăng nhập, đăng ký và xác thực người dùng
+│   │   │   ├── dto — các lớp kiểm tra dữ liệu đầu vào
+│   │   │   │   ├── login.dto.ts
+│   │   │   │   └── register.dto.ts
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.module.ts
+│   │   │   ├── auth.service.ts
+│   │   │   └── jwt.strategy.ts
+│   │   ├── cart — các thành phần xử lý giỏ hàng
+│   │   │   ├── cart.controller.ts
+│   │   │   ├── cart.module.ts
+│   │   │   └── cart.service.ts
+│   │   ├── common — các thành phần dùng chung cho backend
+│   │   │   ├── decorators — các decorator dùng để lấy thông tin người dùng và quyền
+│   │   │   │   ├── current-user.decorator.ts
+│   │   │   │   └── roles.decorator.ts
+│   │   │   ├── guards — các lớp bảo vệ route và kiểm tra quyền truy cập
+│   │   │   │   ├── jwt-auth.guard.ts
+│   │   │   │   └── roles.guard.ts
+│   │   │   └── types — các kiểu dữ liệu dùng chung
+│   │   │       └── auth-user.type.ts
+│   │   ├── contact — các thành phần xử lý liên hệ từ người dùng
+│   │   │   ├── dto — các lớp kiểm tra dữ liệu đầu vào
+│   │   │   │   └── create-contact.dto.ts
+│   │   │   ├── contact.controller.ts
+│   │   │   ├── contact.module.ts
+│   │   │   └── contact.service.ts
+│   │   ├── database — cấu hình kết nối và các entity của cơ sở dữ liệu
+│   │   │   ├── entities — định nghĩa cấu trúc các bảng trong cơ sở dữ liệu
+│   │   │   │   ├── cart-item.entity.ts
+│   │   │   │   ├── cart.entity.ts
+│   │   │   │   ├── contact-message.entity.ts
+│   │   │   │   ├── enums.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── order-item.entity.ts
+│   │   │   │   ├── order.entity.ts
+│   │   │   │   ├── payment.entity.ts
+│   │   │   │   ├── product.entity.ts
+│   │   │   │   └── user.entity.ts
+│   │   │   ├── database.module.ts
+│   │   │   └── entities.ts
+│   │   ├── orders — các thành phần xử lý đơn hàng
+│   │   │   ├── dto — các lớp kiểm tra dữ liệu đơn hàng
+│   │   │   │   ├── create-order.dto.ts
+│   │   │   │   └── update-order-status.dto.ts
+│   │   │   ├── orders.controller.ts
+│   │   │   ├── orders.module.ts
+│   │   │   └── orders.service.ts
+│   │   ├── products — các thành phần quản lý sản phẩm
+│   │   │   ├── dto — các lớp kiểm tra dữ liệu sản phẩm
+│   │   │   │   ├── create-product.dto.ts
+│   │   │   │   └── update-product.dto.ts
+│   │   │   ├── products.controller.ts
+│   │   │   ├── products.module.ts
+│   │   │   └── products.service.ts
+│   │   ├── app.module.ts
+│   │   └── main.ts
+│   ├── uploads — nơi lưu trữ các file được upload lên backend
+│   │   └── products
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── nest-cli.json
+│   ├── package-lock.json
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── database — chứa cấu trúc và dữ liệu khởi tạo cơ sở dữ liệu
+│   └── schema.sql
+│
+├── frontend — frontend xử lý giao diện và tương tác với người dùng
+│   ├── public — chứa các tài nguyên tĩnh của frontend
+│   │   └── original-images — chứa hình ảnh sản phẩm gốc
+│   │       └── products
+│   ├── src — mã nguồn chính của react frontend
+│   │   ├── api — xử lý giao tiếp giữa frontend và backend
+│   │   ├── components — các component giao diện dùng lại
+│   │   ├── context — quản lý trạng thái dùng chung của ứng dụng
+│   │   ├── hooks — các custom hook dùng trong frontend
+│   │   ├── layouts — định nghĩa bố cục giao diện
+│   │   ├── pages — các trang chính của website
+│   │   │   └── admin — các trang quản trị dành cho admin
+│   │   ├── styles — các file css định dạng giao diện
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+│
+├── .gitignore
+└── README.md
+
+logic nghiệp vụ cơ bản
+
+1. người dùng
+   đăng ký → đăng nhập → xác thực jwt → kiểm tra quyền truy cập.
+
+2. sản phẩm
+   frontend → products api → products service → database → trả dữ liệu về frontend.
+
+3. giỏ hàng
+   người dùng chọn sản phẩm → thêm vào giỏ hàng → cập nhật số lượng → xóa sản phẩm.
+
+4. đặt hàng
+   người dùng xác nhận giỏ hàng → gửi thông tin đặt hàng → backend kiểm tra dữ liệu → tạo đơn hàng → lưu database.
+
+5. quản trị
+   admin đăng nhập → xác thực quyền → quản lý sản phẩm, người dùng, đơn hàng, doanh thu và tin nhắn.
+
+6. giao tiếp hệ thống
+   react frontend → rest api → nestjs backend → typeorm → mysql/aiven → trả kết quả về frontend.

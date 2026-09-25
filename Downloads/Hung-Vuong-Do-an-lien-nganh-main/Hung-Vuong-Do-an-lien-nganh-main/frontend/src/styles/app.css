@@ -1,0 +1,384 @@
+/* file chứa css cho app và các thành phần giao diện liên quan. */
+.loading-page {
+    min-height: 50vh;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: #49654f
+}
+
+.site-shell {
+    min-height: 100vh
+}
+
+.mini-category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+}
+
+.mini-category {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.15rem;
+    border: 1px solid rgba(20, 66, 38, .1);
+    border-radius: 12px;
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    transition: .2s
+}
+
+.mini-category:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(10, 50, 25, .08)
+}
+
+.mini-category>span {
+    font-size: .75rem;
+    color: #89a48e
+}
+
+.mini-category div {
+    flex: 1
+}
+
+.mini-category b,
+.mini-category small {
+    display: block
+}
+
+.mini-category small {
+    color: #7d8f82;
+    margin-top: .15rem
+}
+
+.hero-dots {
+    display: flex;
+    gap: .4rem;
+    padding: 0 1rem 1rem
+}
+
+.hero-dots button {
+    width: 24px;
+    height: 3px;
+    border: 0;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, .4);
+    cursor: pointer
+}
+
+.hero-dots button.active {
+    background: #a4e35c
+}
+
+.auth-page {
+    min-height: 75vh;
+    display: grid;
+    place-items: center;
+    padding: 4rem 1rem;
+    background: #f5f8f5
+}
+
+.auth-card {
+    width: min(440px, 100%);
+    background: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(18, 55, 30, .1)
+}
+
+.auth-card.wide {
+    width: min(760px, 100%)
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 1.5rem
+}
+
+.auth-header .brand-mark {
+    margin: auto
+}
+
+.auth-header h1 {
+    margin: .75rem 0 .3rem
+}
+
+.auth-header p {
+    color: #75907b
+}
+
+.auth-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem
+}
+
+.auth-grid .btn {
+    grid-column: 1/-1
+}
+
+.form-group {
+    display: block;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #3a5641
+}
+
+.form-input {
+    width: 100%;
+    margin-top: .4rem;
+    padding: .75rem .8rem;
+    border: 1px solid #d6e2d8;
+    border-radius: 8px;
+    font: inherit;
+    box-sizing: border-box
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #74b33a;
+    box-shadow: 0 0 0 3px rgba(116, 179, 58, .12)
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 1.2rem;
+    color: #718276
+}
+
+.auth-switch a,
+.text-link {
+    color: #4f8f2c;
+    font-weight: 700
+}
+
+.alert-stack {
+    position: fixed;
+    right: 1rem;
+    top: 5rem;
+    z-index: 9999
+}
+
+.alert {
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    margin-bottom: .7rem
+}
+
+.alert-success {
+    background: #eff9ea;
+    color: #4f8f2c;
+    border: 1px solid #cde9be
+}
+
+.alert-error {
+    background: #fff0f0;
+    color: #bc4949;
+    border: 1px solid #efcccc
+}
+
+.success-state {
+    min-height: 52vh
+}
+
+.order-list {
+    display: grid;
+    gap: 1rem
+}
+
+.order-list .card {
+    padding: 1rem
+}
+
+.status-pill {
+    display: inline-flex;
+    padding: .25rem .55rem;
+    border-radius: 999px;
+    font-size: .74rem;
+    background: #eef4ef;
+    color: #47684e
+}
+
+.status-cancelled {
+    background: #fff0f0;
+    color: #b24a4a
+}
+
+.status-delivered {
+    background: #edf8ed;
+    color: #41834e
+}
+
+.status-pending {
+    background: #fff6df;
+    color: #aa7b1d
+}
+
+.status-confirmed {
+    background: #eef5ff;
+    color: #4d6fa8
+}
+
+.payment-options {
+    display: grid;
+    gap: .65rem;
+    margin: 1rem 0
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: 1rem;
+    border: 1px solid #dae4dc;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    text-align: left
+}
+
+.payment-option.active {
+    border-color: #6ba72e;
+    background: #f4faef
+}
+
+.checkout-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .6rem;
+    margin-bottom: 1.5rem
+}
+
+.checkout-steps div {
+    padding: .75rem;
+    text-align: center;
+    background: #eef3ee;
+    border-radius: 8px;
+    color: #809082;
+    font-weight: 700
+}
+
+.checkout-steps div.active {
+    background: #e7f5dc;
+    color: #518b2d
+}
+
+.detail-pro-grid>div {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem
+}
+
+.detail-pro-grid svg {
+    width: 18px
+}
+
+.product-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem
+}
+
+.product-row>img {
+    width: 76px;
+    height: 76px;
+    border-radius: 8px;
+    object-fit: cover
+}
+
+.product-row .product-info {
+    flex: 1
+}
+
+.buy-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem 1.2rem;
+    border-radius: 10px;
+    background: #f2f7f2
+}
+
+.buy-box>div {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem
+}
+
+.buy-box strong {
+    font-size: 1.25rem
+}
+
+.detail-mini-strip {
+    display: grid;
+    gap: .55rem;
+    margin-top: 1rem
+}
+
+.detail-mini-strip>div {
+    display: flex;
+    gap: .7rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: .4rem 0
+}
+
+.detail-mini-strip img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px
+}
+
+.filter-search {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    border: 1px solid #dce6dd;
+    background: #fff;
+    border-radius: 8px;
+    padding: .2rem .35rem .2rem .7rem
+}
+
+.filter-search input {
+    border: 0;
+    outline: none;
+    min-width: 260px
+}
+
+.admin-actions .admin-mini-btn {
+    font-family: inherit
+}
+
+@media(max-width:800px) {
+
+    .mini-category-grid,
+    .auth-grid {
+        grid-template-columns: 1fr
+    }
+
+    .product-row {
+        flex-wrap: wrap
+    }
+
+    .product-row .qty-control {
+        margin-left: auto
+    }
+
+    .filter-panel {
+        order: 2
+    }
+
+    .shop-layout {
+        display: flex;
+        flex-direction: column
+    }
+
+    .filter-search input {
+        min-width: 0;
+        width: 100%
+    }
+}

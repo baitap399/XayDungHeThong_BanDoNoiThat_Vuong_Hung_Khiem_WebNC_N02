@@ -1,0 +1,26 @@
+// file định nghĩa layout admin dùng để tạo khung giao diện chung cho các trang.
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { BarChart3, Boxes, FileText, LayoutDashboard, LogOut, Mail, ShoppingBag, Users } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+
+export function AdminLayout() {
+  const { user, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  if (!user || user.role !== 'ADMIN') return null;
+  const nav = [
+    { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
+    { to: '/admin/products', label: 'Sản phẩm', icon: Boxes },
+    { to: '/admin/orders', label: 'Đơn hàng', icon: ShoppingBag },
+    { to: '/admin/revenue', label: 'Doanh thu', icon: BarChart3 },
+    { to: '/admin/users', label: 'Người dùng', icon: Users },
+    { to: '/admin/messages', label: 'Tin nhắn', icon: Mail },
+  ];
+
+  return <div className="admin-app">
+    <header className="admin-navbar"><div className="admin-navbar-inner"><div className="admin-logo"><Link to="/admin">Admin Panel</Link></div><nav className="admin-nav-menu">{nav.map(({ to, label, icon: Icon, end }) => <NavLink key={to} to={to} end={end} className="admin-nav-link"><Icon size={16} />{label}</NavLink>)}</nav><div className="admin-nav-right"><span className="admin-user">{user.username || user.email}</span><button className="admin-nav-logout" onClick={() => { logout(); navigate('/login'); }}><LogOut size={15} />Đăng xuất</button></div></div></header>
+    {location.pathname !== '/admin' && <div className="admin-breadcrumb"><FileText size={14} /> Quản trị / {location.pathname.split('/').filter(Boolean).slice(1).join(' / ')}</div>}
+    <main className="admin-page"><Outlet /></main>
+  </div>;
+}
