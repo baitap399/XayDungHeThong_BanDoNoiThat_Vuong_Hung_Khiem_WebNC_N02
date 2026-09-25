@@ -26,7 +26,7 @@ export function CheckoutPage() {
     email: user?.email || '',
     phone: user?.phone || '',
     address: '',
-    paymentMethod: 'PAYOS',
+    paymentMethod: 'QR',
     note: '',
   });
   const [step, setStep] = useState(loc.pathname.endsWith('/payment') ? 2 : loc.pathname.endsWith('/invoice') ? 3 : 1);
@@ -37,7 +37,7 @@ export function CheckoutPage() {
       const raw = sessionStorage.getItem('giadung_checkout');
       if (raw) {
         const saved = JSON.parse(raw) as CheckoutForm;
-        setForm({ ...saved, paymentMethod: saved.paymentMethod === 'CASH' ? 'CASH' : 'PAYOS' });
+        setForm({ ...saved, paymentMethod: saved.paymentMethod === 'CASH' || saved.paymentMethod === 'CARD' ? saved.paymentMethod : 'QR' });
       }
     } catch {}
   }, []);
@@ -79,7 +79,7 @@ export function CheckoutPage() {
       await refresh();
       sessionStorage.removeItem('giadung_checkout');
 
-      if (form.paymentMethod === 'PAYOS') {
+      if (form.paymentMethod === 'QR' || form.paymentMethod === 'PAYOS') {
         const { data } = await paymentApi.createPayOSPaymentLink(order.id);
         window.location.href = data.checkoutUrl;
         return;
@@ -135,8 +135,9 @@ export function CheckoutPage() {
           </div>
           <div className="payment-methods">
             {([
-              ['PAYOS', 'PayOS', 'Thanh toán online tự động', 'fa-qrcode'],
+              ['QR', 'Mã QR', 'Quét mã để thanh toán online', 'fa-qrcode'],
               ['CASH', 'Tiền mặt', 'Thanh toán khi nhận hàng', 'fa-money-bill-wave'],
+              ['CARD', 'Thẻ tín dụng', 'Chưa kết nối cổng thanh toán thẻ', 'fa-credit-card'],
             ] as const).map(([value, name, sub, icon]) => (
               <label className="payment-method" key={value}>
                 <input type="radio" checked={form.paymentMethod === value} onChange={() => update('paymentMethod', value)} />
@@ -148,12 +149,12 @@ export function CheckoutPage() {
               </label>
             ))}
           </div>
-          {form.paymentMethod === 'PAYOS' && <div className="method-detail active">
+          {(form.paymentMethod === 'QR' || form.paymentMethod === 'PAYOS') && <div className="method-detail active">
             <div className="cash-box">
               <i className="fa-solid fa-shield-halved" />
               <div>
                 <h3>Thanh toán PayOS</h3>
-                <p>Bạn sẽ được chuyển sang cổng thanh toán PayOS sau khi xác nhận đơn hàng.</p>
+                <p>Chọn “Xem hóa đơn xác nhận”, sau đó xác nhận đơn hàng để mở trang PayOS và quét mã QR thanh toán.</p>
               </div>
             </div>
           </div>}
@@ -166,8 +167,17 @@ export function CheckoutPage() {
               </div>
             </div>
           </div>}
-          <button className="btn btn-primary btn-wide" style={{ marginTop: 24 }}>
-            <i className="fa-solid fa-file-invoice" /> Xem hóa đơn xác nhận
+          {form.paymentMethod === 'CARD' && <div className="method-detail active">
+            <div className="cash-box">
+              <i className="fa-solid fa-credit-card" />
+              <div>
+                <h3>Thanh toán bằng thẻ</h3>
+                <p>Thanh toán thẻ cần được xử lý qua cổng thanh toán bảo mật. Dự án hiện chưa cấu hình cổng hỗ trợ thẻ; không nhập số thẻ tại đây.</p>
+              </div>
+            </div>
+          </div>}
+          <button className="btn btn-primary btn-wide" style={{ marginTop: 24 }} disabled={form.paymentMethod === 'CARD'}>
+            <i className="fa-solid fa-file-invoice" /> {form.paymentMethod === 'CARD' ? 'Cổng thẻ chưa khả dụng' : 'Xem hóa đơn xác nhận'}
           </button>
           <button type="button" className="btn btn-ghost btn-wide" style={{ marginTop: 10 }} onClick={() => go(1)}>
             Quay lại

@@ -23,11 +23,11 @@ export class PaymentService {
     const order = await this.orders.findOne({ where: { id: orderId }, relations: ['payment'] });
     if (!order) throw new NotFoundException('Không tìm thấy đơn hàng');
     if (order.userId !== userId) throw new ForbiddenException('Bạn không có quyền thanh toán đơn hàng này');
-    if (order.paymentMethod !== PaymentMethod.PAYOS) throw new BadRequestException('Đơn hàng không dùng PayOS');
+    if (!this.isPayOSMethod(order.paymentMethod)) throw new BadRequestException('Đơn hàng không dùng thanh toán QR');
     if (order.paymentStatus === PaymentStatus.PAID) throw new BadRequestException('Đơn hàng đã thanh toán');
 
     const payment = order.payment ?? (await this.payments.findOne({ where: { orderId: order.id } }));
-    if (!payment || payment.method !== PaymentMethod.PAYOS || payment.status !== PaymentRecordStatus.PENDING) {
+    if (!payment || !this.isPayOSMethod(payment.method) || payment.status !== PaymentRecordStatus.PENDING) {
       throw new BadRequestException('Trạng thái thanh toán không hợp lệ');
     }
 
@@ -66,7 +66,7 @@ export class PaymentService {
       if (!order) return { ok: true };
 
       const payment = order.payment ?? (await manager.getRepository(Payment).findOne({ where: { orderId: order.id } }));
-      if (!payment || order.paymentMethod !== PaymentMethod.PAYOS || payment.method !== PaymentMethod.PAYOS) {
+      if (!payment || !this.isPayOSMethod(order.paymentMethod) || !this.isPayOSMethod(payment.method)) {
         return { ok: true };
       }
 
@@ -96,6 +96,12 @@ export class PaymentService {
     }
 
     return this.payos;
+  }
+
+  private isPayOSMethod(method: PaymentMethod) {
+    // QR is the current public checkout option; PAYOS remains supported for
+    // orders created before the checkout method was renamed.
+    return method === PaymentMethod.QR || method === PaymentMethod.PAYOS;
   }
 
   private buildReturnUrl(orderId: number) {

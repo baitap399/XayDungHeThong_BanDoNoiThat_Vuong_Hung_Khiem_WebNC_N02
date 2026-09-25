@@ -1,7 +1,7 @@
 // file chứa logic xử lý nghiệp vụ của chức năng orders và làm việc với database khi cần.
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { Cart } from '../database/entities/cart.entity';
 import { CartItem } from '../database/entities/cart-item.entity';
 import { OrderStatus, PaymentMethod, PaymentRecordStatus, PaymentStatus } from '../database/entities/enums';
@@ -121,14 +121,14 @@ export class OrdersService {
   }
  
   async dashboardSummary() {
-    const paidRevenue = await this.orders
+    const orderValue = await this.orders
       .createQueryBuilder('o')
       .select('COALESCE(SUM(o.total_amount), 0)', 'revenue')
-      .where('o.payment_status = :status', { status: PaymentStatus.PAID })
+      .where('o.status != :cancelled', { cancelled: OrderStatus.CANCELLED })
       .getRawOne<{ revenue: string }>();
  
     const [orders, users, products, pendingOrders, revenueByDay, ordersByDay] = await Promise.all([
-      this.orders.count(),
+      this.orders.count({ where: { status: Not(OrderStatus.CANCELLED) } }),
       this.users.count(),
       this.products.count(),
       this.orders.count({ where: { status: OrderStatus.PENDING } }),
@@ -136,7 +136,7 @@ export class OrdersService {
         .createQueryBuilder('o')
         .select("DATE_FORMAT(o.created_at, '%Y-%m-%d')", 'day')
         .addSelect('COALESCE(SUM(o.total_amount), 0)', 'value')
-        .where('o.payment_status = :paid', { paid: PaymentStatus.PAID })
+        .where('o.status != :cancelled', { cancelled: OrderStatus.CANCELLED })
         .andWhere('o.created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
         .groupBy("DATE_FORMAT(o.created_at, '%Y-%m-%d')")
         .orderBy("DATE_FORMAT(o.created_at, '%Y-%m-%d')", 'ASC')
@@ -145,14 +145,15 @@ export class OrdersService {
         .createQueryBuilder('o')
         .select("DATE_FORMAT(o.created_at, '%Y-%m-%d')", 'day')
         .addSelect('COUNT(o.id)', 'value')
-        .where('o.created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
+        .where('o.status != :cancelled', { cancelled: OrderStatus.CANCELLED })
+        .andWhere('o.created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
         .groupBy("DATE_FORMAT(o.created_at, '%Y-%m-%d')")
         .orderBy("DATE_FORMAT(o.created_at, '%Y-%m-%d')", 'ASC')
         .getRawMany<{ day: string; value: string }>(),
     ]);
     const recent = await this.orders.find({ relations: ['items'], order: { createdAt: 'DESC' }, take: 8 });
     return {
-      revenue: Number(paidRevenue?.revenue ?? 0),
+      revenue: Number(orderValue?.revenue ?? 0),
       orders,
       pendingOrders,
       users,
@@ -168,8 +169,8 @@ export class OrdersService {
       .createQueryBuilder('o')
       .select("DATE_FORMAT(o.created_at, '%Y-%m')", 'period')
       .addSelect('COUNT(o.id)', 'orders')
-      .addSelect('COALESCE(SUM(CASE WHEN o.payment_status = :paid THEN o.total_amount ELSE 0 END), 0)', 'revenue')
-      .setParameter('paid', PaymentStatus.PAID)
+      .addSelect('COALESCE(SUM(o.total_amount), 0)', 'revenue')
+      .where('o.status != :cancelled', { cancelled: OrderStatus.CANCELLED })
       .groupBy("DATE_FORMAT(o.created_at, '%Y-%m')")
       .orderBy('period', 'DESC')
       .getRawMany();

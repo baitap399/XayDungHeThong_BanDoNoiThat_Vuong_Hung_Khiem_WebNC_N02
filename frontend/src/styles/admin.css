@@ -118,7 +118,12 @@
 
 /* Layout */
 .admin-page { max-width:1380px; margin:0 auto; padding:1.5rem; }
-.admin-page-shell { padding-bottom:2rem; }
+.admin-page-shell { padding-bottom:2rem; animation:adminPageEnter .32s ease both; }
+.admin-page-shell > .admin-grid { animation:adminPageEnter .38s .04s ease both; }
+.admin-page-shell > .dashboard-grid { animation:adminPageEnter .42s .08s ease both; }
+.admin-page-shell > .dashboard-section,
+.admin-page-shell > .admin-panel { animation:adminPageEnter .42s .12s ease both; }
+@keyframes adminPageEnter { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 .admin-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; }
 .admin-page-header h1 { margin-top:.15rem; font-size:clamp(26px,3vw,38px); }
 .admin-page-header p { color:var(--text-sub); margin:.3rem 0 0; }
@@ -137,7 +142,7 @@
   align-items:flex-start;
   gap:12px;
   box-shadow:0 14px 34px rgba(15,23,42,.05);
-  transition:box-shadow .2s,transform .2s;
+  transition:box-shadow .22s ease,transform .22s ease,border-color .22s ease;
 }
 .admin-stat-card:hover { box-shadow:0 18px 42px rgba(37,99,235,.10); transform:translateY(-2px); }
 .admin-stat-card svg { width:24px; height:24px; padding:6px; box-sizing:content-box; border-radius:8px; background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(20,184,166,.13)); color:var(--accent); }
@@ -149,9 +154,11 @@
 /* Dashboard */
 .dashboard-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
 .dashboard-section { background:#fff; border:1px solid var(--border); border-radius:14px; padding:22px 24px; }
-.chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
+.chart-header { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; min-height:46px; margin-bottom:16px; gap:8px; }
+.chart-header > :first-child { min-width:0; min-height:46px; }
 .section-title { display:flex; align-items:center; gap:8px; color:#1a2340; font-size:14px; font-weight:700; margin:0; padding:0; border:0; }
 .section-title svg { color:#4e73df; }
+.chart-note { margin:4px 0 0 24px; color:#8a95b0; font-size:11px; line-height:1.4; }
 .chart-type-btns { display:flex; gap:4px; background:#f0f3fb; border-radius:10px; padding:3px; }
 .chart-type-btn { border:0; background:transparent; border-radius:8px; padding:5px 12px; color:#6c7a96; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; }
 .chart-type-btn.active { background:#fff; color:#4e73df; box-shadow:0 1px 4px rgba(50,80,160,.10); }
@@ -166,6 +173,8 @@
 .chart-axis-label { fill:#8a95b0; font:11px Inter,sans-serif; }
 .chart-bar-revenue { fill:#4e73df; }
 .chart-bar-orders { fill:#1bbf8f; }
+.chart-bar-revenue,.chart-bar-orders { transform-box:fill-box; transform-origin:center bottom; animation:chartBarEnter .55s cubic-bezier(.2,.75,.25,1) both; }
+@keyframes chartBarEnter { from { transform:scaleY(.05); opacity:.55; } to { transform:scaleY(1); opacity:1; } }
 .chart-line-revenue { fill:none; stroke:#4e73df; stroke-width:2.5; }
 .chart-line-orders { fill:none; stroke:#1bbf8f; stroke-width:2.5; }
 .chart-point-revenue { fill:#4e73df; stroke:#fff; stroke-width:2; }
@@ -184,8 +193,9 @@
 
 /* Forms and actions */
 .admin-actions { display:flex; gap:.45rem; flex-wrap:wrap; }
-.admin-mini-btn { display:inline-flex; align-items:center; gap:.3rem; border:1px solid #dbe3ef; background:#fff; color:#334155; padding:.45rem .65rem; border-radius:8px; cursor:pointer; font-size:.78rem; font-weight:700; }
+.admin-mini-btn { display:inline-flex; align-items:center; gap:.3rem; border:1px solid #dbe3ef; background:#fff; color:#334155; padding:.45rem .65rem; border-radius:8px; cursor:pointer; font-size:.78rem; font-weight:700; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,color .18s ease,background .18s ease; }
 .admin-mini-btn:hover { border-color:#2563eb; color:#2563eb; background:#f8fbff; }
+.admin-mini-btn:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(37,99,235,.10); }
 .admin-mini-btn.danger { border-color:rgba(220,38,38,.2); color:#dc2626; }
 .admin-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
 .admin-form-grid .full { grid-column:1/-1; }
@@ -199,15 +209,21 @@
 .admin-thumb { width:54px; height:54px; object-fit:cover; border-radius:8px; background:#eef4fb; }
 .admin-empty { padding:3rem; text-align:center; color:#b0b8cc; }
 .admin-chart { display:flex; align-items:flex-end; gap:.55rem; height:220px; padding:1rem 0; }
-.admin-bar { flex:1; min-width:18px; background:linear-gradient(180deg,#2563eb,#60a5fa); border-radius:4px 4px 0 0; position:relative; }
+.admin-bar { flex:1; min-width:18px; background:linear-gradient(180deg,#2563eb,#60a5fa); border-radius:4px 4px 0 0; position:relative; transform-origin:bottom; animation:revenueBarEnter .55s cubic-bezier(.2,.75,.25,1) both; }
+@keyframes revenueBarEnter { from { transform:scaleY(.04); opacity:.55; } to { transform:scaleY(1); opacity:1; } }
 .admin-bar span { position:absolute; bottom:-24px; left:50%; transform:translateX(-50%); font-size:.68rem; color:#64748b; white-space:nowrap; }
 .admin-bar strong { position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-size:.65rem; color:#64748b; white-space:nowrap; }
 
 /* Footer */
 .admin-footer { text-align:center; padding:.8rem; border-top:1px solid var(--border); color:#94a3b8; font-size:.76rem; background:#fff; }
 
+@media (prefers-reduced-motion: reduce) {
+  .admin-app *, .admin-app *::before, .admin-app *::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important; }
+}
+
 @media(max-width:1100px){ .admin-grid{grid-template-columns:repeat(3,minmax(0,1fr));} }
 @media(max-width:900px){ .dashboard-grid{grid-template-columns:1fr;} .admin-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media(max-width:560px){ .chart-header{grid-template-columns:1fr; min-height:0;} .chart-header > :first-child{min-height:0;} .chart-type-btns{justify-self:start;} }
 @media(max-width:768px){ .admin-nav-menu{overflow:auto;} .admin-nav-link{padding:.42rem .55rem;} .admin-form-grid{grid-template-columns:1fr;} }
 @media(max-width:700px){ .admin-grid{grid-template-columns:1fr;} .admin-user{display:none;} .admin-page{padding:1rem;} .admin-navbar-inner{padding:0 1rem;} }
 .chart-values{display:none}

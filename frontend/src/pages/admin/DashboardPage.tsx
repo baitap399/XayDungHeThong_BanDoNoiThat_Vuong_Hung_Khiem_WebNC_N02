@@ -44,9 +44,12 @@ function ChartPanel({ kind, labels, values }: { kind: ChartKind; labels: string[
 
   return <div className="dashboard-section">
     <div className="chart-header">
-      <div className="section-title">
-        {kind === 'revenue' ? <BarChart3 size={16} /> : <CalendarDays size={16} />}
-        {title}
+      <div>
+        <div className="section-title">
+          {kind === 'revenue' ? <BarChart3 size={16} /> : <CalendarDays size={16} />}
+          {title}
+        </div>
+        {kind === 'revenue' && <div className="chart-note">Tổng giá trị đơn theo ngày đặt, gồm đơn chưa thanh toán; bỏ đơn đã hủy.</div>}
       </div>
       <div className="chart-type-btns">
         <button className={`chart-type-btn ${type === 'bar' ? 'active' : ''}`} onClick={() => setType('bar')}><BarChart3 size={14}/> Cột</button>
@@ -124,7 +127,7 @@ export function AdminDashboardPage() {
   return <div className="admin-page-shell">
     <div className="admin-page-header"><div><div className="eyebrow">TODAY OVERVIEW</div><h1>Dashboard</h1></div></div>
     <div className="admin-grid">
-      <div className="admin-stat-card"><DollarSign/><div><span>Doanh thu</span><strong>{formatVnd(data.revenue)}</strong></div></div>
+      <div className="admin-stat-card"><DollarSign/><div><span>Giá trị đơn chưa hủy</span><strong>{formatVnd(data.revenue)}</strong></div></div>
       <div className="admin-stat-card"><Receipt/><div><span>Tổng đơn hàng</span><strong>{data.orders}</strong></div></div>
       <div className="admin-stat-card"><Clock3/><div><span>Chờ xử lý</span><strong>{data.pendingOrders}</strong></div></div>
       <div className="admin-stat-card"><Boxes/><div><span>Sản phẩm</span><strong>{data.products}</strong></div></div>
