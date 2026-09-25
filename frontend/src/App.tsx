@@ -12,6 +12,7 @@ import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { OrderDetailPage } from './pages/OrderDetailPage';
 import { OrdersPage } from './pages/OrdersPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ProductListPage } from './pages/ProductListPage';
 import { RegisterPage } from './pages/RegisterPage';
@@ -19,6 +20,7 @@ import { SuccessPage } from './pages/SuccessPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { VerifyOtpPage } from './pages/VerifyOtpPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { ChangePasswordPage } from './pages/ChangePasswordPage';
 import { AdminDashboardPage } from './pages/admin/DashboardPage';
 import { MessagesAdminPage } from './pages/admin/MessagesAdminPage';
 import { OrdersAdminPage } from './pages/admin/OrdersAdminPage';
@@ -60,6 +62,8 @@ export function App() {
           <Route path="checkout/success/:orderId" element={<SuccessPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="orders/:id" element={<OrderDetailPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="change-password" element={<ChangePasswordPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

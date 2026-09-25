@@ -35,6 +35,43 @@ export interface Product {
   isFeatured: boolean;
 }
 
+export interface Favorite {
+  id: number;
+  productId: number;
+  createdAt: string;
+  product: Product;
+}
+
+export interface UserAddress {
+  id: number;
+  userId: number;
+  fullName: string;
+  phone: string;
+  address: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CouponDiscountType = 'percentage' | 'fixed';
+
+export interface Coupon {
+  id: number;
+  code: string;
+  description: string | null;
+  discountType: CouponDiscountType;
+  discountValue: number | string;
+  minOrderAmount: number | string;
+  maxDiscountAmount: number | string | null;
+  usageLimit: number | null;
+  usedCount: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CartItem {
   id: number;
   productId: number;

@@ -9,3 +9,5 @@ export * from './order-item.entity';
 export * from './payment.entity';
 export * from './contact-message.entity';
 export * from './password-reset-token.entity';
+export * from './user-address.entity';
+export * from './favorite.entity';

@@ -103,6 +103,19 @@ export class AuthService {
     return { message: 'Đổi mật khẩu thành công.' };
   }
 
+  async changePassword(userId: number, currentPassword: string, newPassword: string, confirmPassword: string) {
+    if (newPassword !== confirmPassword) throw new BadRequestException('Mật khẩu nhập lại không khớp');
+
+    const user = await this.users.findOneByOrFail({ id: userId });
+    if (!(await bcrypt.compare(currentPassword, user.password))) {
+      throw new UnauthorizedException('Mật khẩu hiện tại không đúng');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await this.users.save(user);
+    return { message: 'Đổi mật khẩu thành công.' };
+  }
+
   private async getValidResetToken(rawEmail: string, otp: string) {
     const email = rawEmail.trim().toLowerCase();
     const user = await this.users.findOne({ where: { email } });

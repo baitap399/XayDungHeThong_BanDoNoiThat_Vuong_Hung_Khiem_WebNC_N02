@@ -84,6 +84,7 @@ export function UserLayout() {
                 </button>
                 <div className="account-dropdown">
                   <strong>{user.username || user.email || user.fullName}</strong>
+                  <Link to="/profile"><i className="fa-solid fa-id-card" /> Hồ sơ của tôi</Link>
                   <Link to="/orders"><i className="fa-solid fa-box" /> Đơn hàng</Link>
                   {user.role === 'ADMIN' && <Link to="/admin"><i className="fa-solid fa-gauge" /> Quản trị</Link>}
                   <button type="button" onClick={logout}><i className="fa-solid fa-right-from-bracket" /> Đăng xuất</button>
@@ -109,7 +110,10 @@ export function UserLayout() {
           <NavLink to="/contact">Liên hệ</NavLink>
           <NavLink to="/orders">Đơn hàng</NavLink>
           <NavLink to="/cart">Giỏ hàng</NavLink>
-          {!user ? <NavLink to="/login">Đăng nhập</NavLink> : <button type="button" onClick={logout}>Đăng xuất</button>}
+          {!user ? <NavLink to="/login">Đăng nhập</NavLink> : <>
+            <NavLink to="/profile">Hồ sơ của tôi</NavLink>
+            <button type="button" onClick={logout}>Đăng xuất</button>
+          </>}
         </div>
       </header>
 
