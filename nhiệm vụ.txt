@@ -1,0 +1,13 @@
+Ae làm xem xong làm theo mấy cái này nha ( làm xong thì xóa )
+
+- làm trang cá nhân:
+    + đổi mật khẩu, hoặc thông tin tài khoản
+    + địa chỉ riêng từng tài khoản
+    + mã giảm giá(đã có backend mã giảm giá và db)
+    + đánh giá
+    + sản phẩm yêu thích
+    + ......
+- làm lại phần thanh toán ( đã kết nối với phương thức thanh toán thực tế, còn cần chỉnh lại giao diện và 1 vài bug nhỏ )
+- AI chatbot
+- đổi lại ảnh cho sản phẩm, và thêm sản phẩm mới.
+- fix lại 1 vài text và vị trí nút bị lệch (xem trực tiếp trên web)

@@ -1,0 +1,26 @@
+// file cấu hình chiến lược xác thực jwt để kiểm tra token và lấy thông tin người dùng.
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { AuthUser } from '../common/types/auth-user.type';
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(config: ConfigService) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: config.getOrThrow<string>('JWT_SECRET'),
+    });
+  }
+
+  validate(payload: AuthUser & { sub: number }): AuthUser {
+    return {
+      id: payload.sub,
+      username: payload.username,
+      email: payload.email,
+      role: payload.role,
+    };
+  }
+}
