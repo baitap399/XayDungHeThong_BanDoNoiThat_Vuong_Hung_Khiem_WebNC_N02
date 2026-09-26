@@ -38,6 +38,7 @@ export function UserLayout() {
 
   return (
     <div className="site-shell">
+      <a className="skip-link" href="#main-content">Đến nội dung chính</a>
       <div className="alert-stack"><div id="react-alert-root" /></div>
 
       <header className="site-header">
@@ -53,10 +54,11 @@ export function UserLayout() {
             <span className="brand-copy">Hung<span>Gia dụng</span></span>
           </Link>
 
-          <form className="nav-search" onSubmit={search}>
+          <form className="nav-search" role="search" onSubmit={search}>
             <i className="fa-solid fa-magnifying-glass" />
             <input value={keyword} onChange={e => setKeyword(e.target.value)}
-              type="text" placeholder="Tìm nồi cơm điện, máy xay, máy hút bụi..." autoComplete="off" />
+              type="search" aria-label="Tìm kiếm sản phẩm" placeholder="Tìm sản phẩm cho nhà bạn..." autoComplete="off" />
+            <button type="submit" aria-label="Tìm kiếm" title="Tìm kiếm"><i className="fa-solid fa-arrow-right" /></button>
           </form>
 
           <div className="nav-links">
@@ -79,7 +81,7 @@ export function UserLayout() {
               </Link>
             ) : (
               <div className="account-menu">
-                <button type="button" className="icon-btn" aria-label="Tài khoản">
+                <button type="button" className="icon-btn" aria-label="Tài khoản" title="Tài khoản">
                   <i className="fa-solid fa-circle-user" />
                 </button>
                 <div className="account-dropdown">
@@ -93,7 +95,7 @@ export function UserLayout() {
             )}
 
             <button className="menu-toggle" type="button" aria-label="Mở menu"
-              aria-expanded={menuOpen} onClick={() => setMenuOpen(v => !v)}>
+              aria-expanded={menuOpen} aria-controls="mobileMenu" onClick={() => setMenuOpen(v => !v)}>
               <i className={menuOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'} />
             </button>
           </div>
@@ -101,7 +103,7 @@ export function UserLayout() {
 
         <div className={`mobile-panel ${menuOpen ? 'open' : ''}`} id="mobileMenu">
           <form onSubmit={search} className="mobile-search">
-            <input value={keyword} onChange={e => setKeyword(e.target.value)} type="text" placeholder="Tìm kiếm sản phẩm..." />
+            <input value={keyword} onChange={e => setKeyword(e.target.value)} type="search" aria-label="Tìm kiếm sản phẩm" placeholder="Tìm kiếm sản phẩm..." />
             <button type="submit" aria-label="Tìm kiếm"><i className="fa-solid fa-magnifying-glass" /></button>
           </form>
           <NavLink end to="/">Trang chủ</NavLink>
@@ -117,7 +119,7 @@ export function UserLayout() {
         </div>
       </header>
 
-      <main><Outlet /></main>
+      <main id="main-content" tabIndex={-1}><Outlet /></main>
 
       <footer className="site-footer">
         <div className="footer-main">
@@ -160,7 +162,7 @@ export function UserLayout() {
         </div>
         <div className="footer-bottom">
           <span>© 2026 Hung Gia dụng Shop. All rights reserved.</span>
-          <span>Thiết kế cân bằng, mượt và tối ưu cho mua sắm.</span>
+          <span>Thẻ, chuyển khoản & thanh toán khi nhận hàng</span>
         </div>
       </footer>
     </div>
