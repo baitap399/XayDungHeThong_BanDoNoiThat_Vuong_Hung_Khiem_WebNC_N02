@@ -18,10 +18,10 @@ export function ProductCard({ product, home = false, index = 0 }: { product: Pro
 
   return <article className="product-card reveal" style={{ '--delay': `${index * (home ? 70 : 55)}ms` } as React.CSSProperties}>
     <Link to={`/products/${product.id}`} className="product-media">
-      {product.imageUrl ? <img src={imageUrl(product.imageUrl)} alt={product.name}
+      {product.imageUrl ? <img src={imageUrl(product.imageUrl)} alt={product.name} loading="lazy"
         onError={e => { e.currentTarget.style.display = 'none'; const n = e.currentTarget.nextElementSibling as HTMLElement | null; if (n) n.style.display = 'flex'; }} /> : null}
       <div className="product-fallback" style={{ display: product.imageUrl ? 'none' : 'flex' }}><i className="fa-solid fa-bowl-food" /></div>
-      {product.isFeatured && <span className="badge">Hot</span>}
+      {product.isFeatured && <span className="badge">Nổi bật</span>}
       {!product.isFeatured && soldOut && <span className="badge muted">Hết hàng</span>}
     </Link>
     <div className="product-info">
@@ -37,4 +37,8 @@ export function ProductCard({ product, home = false, index = 0 }: { product: Pro
       )}
     </div>
   </article>;
+}
+
+export function ProductCardSkeleton() {
+  return <div className="product-card product-skeleton" aria-hidden="true"><div className="product-media" /><div className="product-info"><span /><span /><span /><span /></div></div>;
 }

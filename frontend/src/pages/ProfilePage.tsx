@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronDown, Save } from 'lucide-react';
 import { formatVnd, imageUrl } from '../api/client';
 import { addressApi, couponApi, favoriteApi, orderApi } from '../api/services';
 import type { Coupon, Favorite, Order, UserAddress } from '../api/types';
@@ -62,6 +63,7 @@ function toast(message: string) {
 export function ProfilePage() {
   const { user, logout } = useAuth();
   const [editing, setEditing] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
@@ -117,7 +119,10 @@ export function ProfilePage() {
         <strong>{displayName}</strong>
         <span>{user.email}</span>
       </div>
-      <nav className="profile-menu">
+      <button type="button" className="profile-menu-toggle" aria-expanded={menuOpen} aria-controls="profile-navigation" onClick={() => setMenuOpen(value => !value)}>
+        Menu tài khoản <ChevronDown size={18} aria-hidden="true" />
+      </button>
+      <nav id="profile-navigation" aria-label="Tài khoản cá nhân" className={`profile-menu ${menuOpen ? 'is-open' : ''}`}>
         <a href="#profile-info" className="active"><i className="fa-solid fa-id-card" /> Hồ sơ cá nhân</a>
         <Link to="/orders"><i className="fa-solid fa-receipt" /> Đơn hàng của tôi</Link>
         <a href="#profile-addresses"><i className="fa-solid fa-location-dot" /> Địa chỉ giao hàng</a>
@@ -152,13 +157,13 @@ export function ProfilePage() {
             <span>Ảnh đại diện</span>
           </div>
           <label>Họ và tên
-            <input value={form.fullName} onChange={e => update('fullName', e.target.value)} readOnly={!editing} />
+            <input autoComplete="name" value={form.fullName} onChange={e => update('fullName', e.target.value)} readOnly={!editing} />
           </label>
           <label>Email
             <input value={form.email} readOnly />
           </label>
           <label>Số điện thoại
-            <input value={form.phone} onChange={e => update('phone', e.target.value)} readOnly={!editing} />
+            <input type="tel" autoComplete="tel" value={form.phone} onChange={e => update('phone', e.target.value)} readOnly={!editing} />
           </label>
           <label>Ngày sinh
             <input type="date" value={form.birthDate} onChange={e => update('birthDate', e.target.value)} disabled={!editing} />
@@ -175,9 +180,10 @@ export function ProfilePage() {
             </label>)}
           </fieldset>
           <label>Địa chỉ mặc định
-            <input value={form.address} onChange={e => update('address', e.target.value)} readOnly={!editing} />
+            <textarea rows={2} autoComplete="street-address" value={form.address} onChange={e => update('address', e.target.value)} readOnly={!editing} />
           </label>
         </div>
+        {editing && <button type="submit" className="profile-mobile-save profile-mini-btn primary"><Save size={18} aria-hidden="true" /> Lưu thay đổi</button>}
       </form>
 
       <div className="profile-stats">
@@ -244,20 +250,20 @@ export function ProfilePage() {
           <Link to="/orders">Xem tất cả <i className="fa-solid fa-angle-right" /></Link>
         </div>
         {recentOrders.length ? <div className="profile-table-wrap">
-          <table>
-            <thead><tr><th>Mã đơn</th><th>Ngày đặt</th><th>Sản phẩm</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
-            <tbody>{recentOrders.map(order => <tr key={order.id}>
-              <td>#{order.id}</td>
-              <td>{new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
-              <td><div className="profile-order-products">
+          <table role="table" aria-label="Đơn hàng gần đây">
+            <thead role="rowgroup"><tr role="row"><th scope="col">Mã đơn</th><th scope="col">Ngày đặt</th><th scope="col">Sản phẩm</th><th scope="col">Tổng tiền</th><th scope="col">Trạng thái</th><th scope="col">Chi tiết</th></tr></thead>
+            <tbody role="rowgroup">{recentOrders.map(order => <tr key={order.id} role="row">
+              <td role="cell" data-label="Mã đơn">#{order.id}</td>
+              <td role="cell" data-label="Ngày đặt">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
+              <td role="cell" data-label="Sản phẩm"><div className="profile-order-products">
                 {order.items.slice(0, 3).map(item => item.productImage
                   ? <img key={item.id} src={imageUrl(item.productImage)} alt={item.productName} />
                   : <span key={item.id}><i className="fa-solid fa-box" /></span>)}
                 <small>{order.items.length} sản phẩm</small>
               </div></td>
-              <td>{formatVnd(order.totalAmount)}</td>
-              <td><span className={`status-badge status-${order.status.toLowerCase()}`}>{statusLabels[order.status]}</span></td>
-              <td><Link to={`/orders/${order.id}`}>Xem <i className="fa-solid fa-angle-right" /></Link></td>
+              <td role="cell" data-label="Tổng tiền">{formatVnd(order.totalAmount)}</td>
+              <td role="cell" data-label="Trạng thái"><span className={`status-badge status-${order.status.toLowerCase()}`}>{statusLabels[order.status]}</span></td>
+              <td role="cell"><Link to={`/orders/${order.id}`} aria-label={`Xem đơn hàng #${order.id}`}>Xem <i className="fa-solid fa-angle-right" /></Link></td>
             </tr>)}</tbody>
           </table>
         </div> : <div className="profile-empty"><i className="fa-solid fa-receipt" /> Chưa có đơn hàng nào.</div>}

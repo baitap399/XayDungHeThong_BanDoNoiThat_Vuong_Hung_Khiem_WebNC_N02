@@ -1,58 +1,92 @@
 // file là trang home của giao diện người dùng.
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight, Pause, Play, RotateCw } from 'lucide-react';
 import { productApi } from '../api/services';
 import type { Product } from '../api/types';
-import { ProductCard } from '../components/ProductCard';
+import { ProductCard, ProductCardSkeleton } from '../components/ProductCard';
 
 const slides = [
-  'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1500&q=85',
-  'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1500&q=85',
-  'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1500&q=85',
-  'https://images.unsplash.com/photo-1584990347449-ae44f78d0f8b?auto=format&fit=crop&w=1500&q=85',
+  {
+    src: 'https://images.pexels.com/photos/31473208/pexels-photo-31473208/free-photo-of-modern-kitchen-counter-with-tulips-and-appliances.jpeg?auto=compress&fit=crop&w=1800&q=85',
+    alt: 'Thiết bị gia dụng trong căn bếp sáng hiện đại',
+    position: '50% 72%',
+    mobilePosition: '42% 78%',
+  },
+  {
+    src: 'https://images.pexels.com/photos/4816319/pexels-photo-4816319.jpeg?auto=compress&fit=crop&w=1800&q=85',
+    alt: 'Các thiết bị nhỏ trên bàn bếp',
+    position: '50% 58%',
+    mobilePosition: '45% 60%',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1720694035658-220bc2d2a3d1?auto=format&fit=crop&w=1800&q=85',
+    alt: 'Không gian bếp tối giản với thiết bị âm tủ',
+    position: '50% 62%',
+    mobilePosition: '65% 65%',
+  },
 ];
 
 const categories = [
-  ['Nồi cơm điện','Gia đình & tiện nghi','https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=400&q=75'],
-  ['Robot hút bụi','Build & Assembled','https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=400&q=75'],
-  ['Máy xay sinh tố','144Hz – 4K HDR','https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=400&q=75'],
-  ['Đồ dùng nhà bếp','Cơ & Membrane','https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=400&q=75'],
-  ['Quạt điện','Wireless & Wired','https://images.unsplash.com/photo-1565031491910-e57fac031c41?auto=format&fit=crop&w=400&q=75'],
+  ['Nồi cơm điện','Cơm ngon mỗi ngày','https://dienmaytienphong.com/wp-content/uploads/2025/06/SR-MVN18LRAX.png'],
+  ['Robot hút bụi','Nhà sạch thảnh thơi','https://caothienphat.com/wp-content/uploads/2025/04/Dreame-1-768x768.jpg'],
+  ['Máy xay sinh tố','Tươi ngon tại nhà','https://dienmayquanghanh.com/Upload/avatar/ava-hr2223.jpg'],
+  ['Đồ dùng nhà bếp','Trọn vẹn bữa cơm nhà','https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=400&q=75'],
+  ['Quạt điện','Mát lành, dễ chịu','https://images.unsplash.com/photo-1565031491910-e57fac031c41?auto=format&fit=crop&w=400&q=75'],
   ['Máy hút bụi','Tiện nghi gia đình','https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=400&q=75'],
 ];
 
 export function HomePage() {
   const [current, setCurrent] = useState(0);
   const [featured, setFeatured] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    productApi.featured().then(r => setFeatured(r.data)).catch(() => setFeatured([]));
-  }, []);
+    let active = true;
+    setLoading(true);
+    setFailed(false);
+    productApi.featured().then(r => { if (active) setFeatured(r.data); })
+      .catch(() => { if (active) { setFeatured([]); setFailed(true); } })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [retry]);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setCurrent(v => (v + 1) % slides.length), 5000);
-    return () => window.clearInterval(timer);
-  }, []);
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let timer: number | undefined;
+    const sync = () => {
+      window.clearInterval(timer);
+      if (!paused && !motion.matches) timer = window.setInterval(() => setCurrent(v => (v + 1) % slides.length), 5000);
+    };
+    sync();
+    motion.addEventListener('change', sync);
+    return () => { window.clearInterval(timer); motion.removeEventListener('change', sync); };
+  }, [paused]);
 
   return <>
     <section className="home-hero">
       <div className="hero-showcase reveal-left" id="heroShowcase">
         <div className="hs-slides">
-          {slides.map((src, i) => (
-            <div className={`hs-slide ${i === current ? 'active' : ''}`} key={src}>
-              <img src={src} alt={i === 0 ? 'Nhà bếp hiện đại' : 'Không gian gia dụng'} />
+          {slides.map((slide, i) => (
+            <div className={`hs-slide ${i === current ? 'active' : ''}`} key={slide.src}>
+              <img src={slide.src} alt={slide.alt} style={{ '--hero-position': slide.position, '--hero-mobile-position': slide.mobilePosition } as React.CSSProperties} fetchPriority={i === 0 ? 'high' : 'auto'} />
             </div>
           ))}
         </div>
         <div className="hs-progress"><div className="hs-progress-bar" style={{ width: `${((current + 1) / slides.length) * 100}%`, transition: 'width 5000ms linear' }} /></div>
         <div className="hs-dots" id="hsDots">
-          {slides.map((_, i) => <button key={i} className={`hs-dot ${i === current ? 'active' : ''}`} aria-label={`Slide ${i + 1}`} onClick={() => setCurrent(i)} />)}
+          {slides.map((_, i) => <button key={i} className={`hs-dot ${i === current ? 'active' : ''}`} aria-label={`Ảnh ${i + 1}`} aria-pressed={i === current} onClick={() => setCurrent(i)} />)}
+          <button className="hs-pause" type="button" aria-label={paused ? 'Tiếp tục trình chiếu' : 'Tạm dừng trình chiếu'} title={paused ? 'Tiếp tục trình chiếu' : 'Tạm dừng trình chiếu'} aria-pressed={paused} onClick={() => setPaused(v => !v)}>{paused ? <Play size={16} /> : <Pause size={16} />}</button>
         </div>
         <div className="hero-overlay" />
         <div className="hero-copy">
-          <span className="eyebrow">Household Store</span>
-          <h1>Thiết bị gia dụng tiện nghi cho ngôi nhà hiện đại</h1>
-          <p>Nồi cơm điện, máy xay, nồi chiên, máy hút bụi và thiết bị gia dụng chính hãng với trải nghiệm mua sắm mượt mà.</p>
+          <span className="eyebrow">Hung Gia dụng</span>
+          <h1>Thiết bị gia dụng</h1>
+          <p className="hero-subtitle">Chăm chút từng góc nhà.</p>
+          <p>Nồi cơm điện, máy xay, nồi chiên và thiết bị chăm sóc nhà cửa chính hãng cho cuộc sống mỗi ngày.</p>
           <div className="hero-actions">
             <Link to="/products" className="btn btn-primary"><i className="fa-solid fa-bag-shopping" /> Mua ngay</Link>
             <Link to="/products?category=Nồi cơm điện" className="btn btn-light"><i className="fa-solid fa-bowl-food" /> Xem nồi cơm điện</Link>
@@ -64,33 +98,29 @@ export function HomePage() {
       <aside className="hero-side reveal-right">
         <MiniCategory name="Nồi cơm điện" image="https://dienmaytienphong.com/wp-content/uploads/2025/06/SR-MVN18LRAX.png" />
         <MiniCategory name="Đồ dùng nhà bếp" image="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=600&q=80" />
-        <MiniCategory name="Máy xay sinh tố" image="https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=600&q=80" />
+        <MiniCategory name="Máy xay sinh tố" image="https://dienmayquanghanh.com/Upload/avatar/ava-hr2223.jpg" />
         <MiniCategory name="Máy hút bụi" image="https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=600&q=80" />
       </aside>
     </section>
 
     <section className="trust-bar reveal">
-      <Trust icon="fa-truck-fast" bg="#eff6ff" color="#2563eb" title="Giao trong ngày" sub="Nội thành HCM & HN" />
-      <div className="trust-divider" />
-      <Trust icon="fa-shield-halved" bg="#f0fdf4" color="#16a34a" title="Bảo hành chính hãng" sub="12 – 24 tháng" />
-      <div className="trust-divider" />
-      <Trust icon="fa-rotate-left" bg="#fff7ed" color="#ea580c" title="Đổi trả miễn phí" sub="Trong vòng 7 ngày" />
-      <div className="trust-divider" />
-      <Trust icon="fa-headset" bg="#fdf4ff" color="#9333ea" title="Hỗ trợ 24/7" sub="Chat & Gọi trực tiếp" />
-      <div className="trust-divider" />
-      <Trust icon="fa-credit-card" bg="#fefce8" color="#ca8a04" title="Thanh toán an toàn" sub="Thẻ, chuyển khoản, COD" />
+      <Trust icon="fa-truck-fast" title="Giao trong ngày" sub="Nội thành HCM & HN" />
+      <Trust icon="fa-shield-halved" title="Bảo hành chính hãng" sub="12 - 24 tháng" />
+      <Trust icon="fa-rotate-left" title="Đổi trả miễn phí" sub="Trong vòng 7 ngày" />
+      <Trust icon="fa-headset" title="Hỗ trợ 24/7" sub="Chat & Gọi trực tiếp" />
+      <Trust icon="fa-credit-card" title="Thanh toán an toàn" sub="Thẻ, chuyển khoản, COD" />
     </section>
 
     <section className="section">
       <div className="section-heading reveal">
-        <div><span className="eyebrow dark">Danh mục</span><h2>Khám phá theo loại sản phẩm</h2></div>
+        <div><h2>Mua theo danh mục</h2></div>
         <Link to="/products" className="text-link">Tất cả <i className="fa-solid fa-arrow-right" /></Link>
       </div>
       <div className="category-grid">
         {categories.map(([name, sub, image], i) => (
           <Link key={name} to={`/products?category=${encodeURIComponent(name === 'Robot hút bụi' ? 'Thiết bị gia dụng thông minh' : name)}`} className="cat-card reveal" style={{ '--delay': `${i * 60}ms` } as React.CSSProperties}>
-            <img src={image} alt={name} />
-            <div className="cat-label"><strong>{name}</strong><span>{sub}</span><div className="cat-pill"><i className="fa-solid fa-arrow-right" /> Xem ngay</div></div>
+            <img src={image} alt={name} loading="lazy" />
+            <div className="cat-label"><strong>{name}</strong><span>{sub}</span><ArrowRight className="cat-arrow" size={18} aria-hidden="true" /></div>
           </Link>
         ))}
       </div>
@@ -98,20 +128,21 @@ export function HomePage() {
 
     <section className="section">
       <div className="section-heading reveal">
-        <div><span className="eyebrow dark">Bestselling Products</span><h2>Sản phẩm nổi bật</h2></div>
+        <div><h2>Sản phẩm nổi bật</h2></div>
         <Link to="/products" className="text-link">Xem thêm <i className="fa-solid fa-arrow-right" /></Link>
       </div>
-      <div className="product-grid">
-        {featured.length ? featured.map((p, i) => <ProductCard key={p.id} product={p} home index={i} />) : null}
-      </div>
+      {loading ? <div className="product-grid" role="status" aria-label="Đang tải sản phẩm" aria-busy="true">{Array.from({ length: 4 }, (_, i) => <ProductCardSkeleton key={i} />)}</div> :
+        featured.length ? <div className="product-grid">{featured.map((p, i) => <ProductCard key={p.id} product={p} home index={i} />)}</div> :
+        <div className="empty-state" role="status"><h3>{failed ? 'Chưa thể tải sản phẩm' : 'Chưa có sản phẩm nổi bật'}</h3><p>{failed ? 'Vui lòng kiểm tra kết nối và thử lại.' : 'Khám phá thêm các sản phẩm trong cửa hàng.'}</p>{failed ? <button className="btn btn-outline" onClick={() => setRetry(v => v + 1)}><RotateCw size={16} /> Thử lại</button> : <Link to="/products" className="btn btn-primary">Xem tất cả sản phẩm</Link>}</div>}
     </section>
 
     <section className="promo-banner reveal">
       <img className="promo-bg" src="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1600&q=80" alt="Không gian bếp hiện đại" />
-      <div className="promo-overlay" /><div className="promo-glow" />
+      <div className="promo-overlay" />
       <div className="promo-body">
         <span className="promo-kicker"><i className="fa-solid fa-bolt" /> Flash Sale</span>
-        <h2>Ưu đãi cuối tuần —<br />Giảm đến <em>30%</em> Nồi cơm điện & Robot hút bụi</h2>
+        <h2>Ưu đãi cuối tuần<br />Giảm đến <em>30%</em></h2>
+        <p className="promo-products">Nồi cơm điện & Robot hút bụi</p>
         <p>Số lượng có hạn. Miễn phí vận chuyển toàn quốc cho đơn từ 3 triệu.</p>
         <div className="promo-actions">
           <Link to="/products" className="btn btn-primary"><i className="fa-solid fa-fire" /> Xem ưu đãi ngay</Link>
@@ -123,7 +154,6 @@ export function HomePage() {
 
     <section className="feature-split section">
       <div className="split-text reveal-left">
-        <span className="eyebrow dark">New Arrival</span>
         <h2>Không gian gia đình gọn gàng, tiện nghi và hiện đại</h2>
         <p>Chọn nhanh combo nồi cơm điện, máy xay, nồi chiên và thiết bị vệ sinh phù hợp nhu cầu gia đình.</p>
         <Link to="/products?category=Thiết bị gia dụng thông minh" className="btn btn-primary">Khám phá thiết bị</Link>
@@ -154,8 +184,8 @@ export function HomePage() {
           <p>Đăng ký để không bỏ lỡ flash sale, sản phẩm mới và mã giảm giá riêng cho thành viên.</p>
         </div>
         <form className="newsletter-form" onSubmit={e => e.preventDefault()}>
-          <div className="newsletter-input-wrap"><i className="fa-solid fa-envelope" /><input type="email" placeholder="Email của bạn..." required /></div>
-          <button type="submit" className="btn btn-indigo"><i className="fa-solid fa-paper-plane" /> Đăng ký</button>
+          <div className="newsletter-input-wrap"><i className="fa-solid fa-envelope" /><input type="email" aria-label="Email nhận ưu đãi" autoComplete="email" placeholder="Email của bạn" required /></div>
+          <button type="submit" className="btn btn-primary"><i className="fa-solid fa-paper-plane" /> Đăng ký</button>
         </form>
       </div>
     </section>
@@ -163,8 +193,8 @@ export function HomePage() {
 }
 
 function MiniCategory({name,image}:{name:string,image:string}) {
-  return <Link to={`/products?category=${encodeURIComponent(name)}`} className="mini-category"><img src={image} alt={name} /><span>{name}</span></Link>;
+  return <Link to={`/products?category=${encodeURIComponent(name)}`} className="mini-category"><img src={image} alt="" /><span>{name}</span><ArrowRight size={18} aria-hidden="true" /></Link>;
 }
-function Trust({icon,bg,color,title,sub}:{icon:string,bg:string,color:string,title:string,sub:string}) {
-  return <div className="trust-item"><div className="trust-icon" style={{background:bg}}><i className={`fa-solid ${icon}`} style={{color}} /></div><div><strong>{title}</strong><span>{sub}</span></div></div>;
+function Trust({icon,title,sub}:{icon:string,title:string,sub:string}) {
+  return <div className="trust-item"><div className="trust-icon"><i className={`fa-solid ${icon}`} aria-hidden="true" /></div><div><strong>{title}</strong><span>{sub}</span></div></div>;
 }
