@@ -27,6 +27,7 @@ import { OrdersAdminPage } from './pages/admin/OrdersAdminPage';
 import { ProductAdminPage } from './pages/admin/ProductAdminPage';
 import { RevenueAdminPage } from './pages/admin/RevenueAdminPage';
 import { UsersAdminPage } from './pages/admin/UsersAdminPage';
+import { ChatbotKnowledgePage } from './pages/admin/ChatbotKnowledgePage';
 
 export function App() {
   return <BrowserRouter>
@@ -40,6 +41,7 @@ export function App() {
           <Route path="users" element={<UsersAdminPage />} />
           <Route path="messages" element={<MessagesAdminPage />} />
           <Route path="revenue" element={<RevenueAdminPage />} />
+          <Route path="chatbot/knowledge" element={<ChatbotKnowledgePage />} />
         </Route>
       </Route>
       <Route element={<UserLayout />}>

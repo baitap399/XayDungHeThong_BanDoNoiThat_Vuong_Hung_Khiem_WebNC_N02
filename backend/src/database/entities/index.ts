@@ -11,3 +11,4 @@ export * from './contact-message.entity';
 export * from './password-reset-token.entity';
 export * from './user-address.entity';
 export * from './favorite.entity';
+export * from './chatbot-knowledge.entity';

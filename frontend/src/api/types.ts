@@ -129,4 +129,31 @@ export interface ContactMessage {
 
 export interface ChatResponse {
   message: string;
+  source: 'knowledge' | 'gemini' | 'product';
+  knowledgeId?: number;
+}
+
+export type KnowledgeStatus = 'pending' | 'approved' | 'rejected';
+
+export interface ChatbotKnowledge {
+  id: number;
+  question: string;
+  answer: string;
+  keywords: string;
+  contextHash: string;
+  status: KnowledgeStatus;
+  usageCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChatbotStats {
+  since: string;
+  totalQuestions: number;
+  knowledgeHits: number;
+  geminiCalls: number;
+  productQueries: number;
+  knowledgeHitRate: number;
+  errors: number;
+  pendingSaveFailures: number;
 }
