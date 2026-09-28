@@ -1,6 +1,6 @@
 // file tập trung các hàm gọi api cho các chức năng của ứng dụng.
 import { api } from './client';
-import type { Cart, ContactMessage, Coupon, DashboardData, Favorite, Order, Product, User, UserAddress } from './types';
+import type { Cart, ChatResponse, ContactMessage, Coupon, DashboardData, Favorite, Order, Product, User, UserAddress } from './types';
 
 export const authApi = {
   login: (data: { usernameOrEmail: string; password: string }) => api.post<{ accessToken: string; user: User }>('/auth/login', data),
@@ -20,6 +20,10 @@ export const productApi = {
   create: (form: FormData) => api.post<Product>('/products', form, { headers: { 'Content-Type': 'multipart/form-data' } }),
   update: (id: number, form: FormData) => api.patch<Product>(`/products/${id}`, form, { headers: { 'Content-Type': 'multipart/form-data' } }),
   remove: (id: number) => api.delete(`/products/${id}`),
+};
+
+export const chatApi = {
+  send: (message: string) => api.post<ChatResponse>('/chat', { message }, { timeout: 20_000 }),
 };
 
 export const cartApi = {

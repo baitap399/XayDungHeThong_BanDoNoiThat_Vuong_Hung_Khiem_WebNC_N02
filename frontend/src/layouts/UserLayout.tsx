@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useReveal } from '../hooks/useReveal';
 import { productApi } from '../api/services';
+import { ChatWidget } from '../components/ChatWidget';
 
 export function UserLayout() {
   const { user, logout } = useAuth();
@@ -181,6 +182,7 @@ export function UserLayout() {
           <span>Thẻ, chuyển khoản & thanh toán khi nhận hàng</span>
         </div>
       </footer>
+      <ChatWidget />
     </div>
   );
 }

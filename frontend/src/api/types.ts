@@ -126,3 +126,7 @@ export interface ContactMessage {
   isRead: boolean;
   createdAt: string;
 }
+
+export interface ChatResponse {
+  message: string;
+}
