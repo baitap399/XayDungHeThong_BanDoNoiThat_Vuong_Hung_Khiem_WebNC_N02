@@ -4,10 +4,12 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ThemeProvider } from './context/ThemeContext';
 import './styles/user.css';
 import './styles/legacy-pages.css';
 import './styles/animations.css';
 import './styles/admin.css';
 import './styles/admin-auth.css';
+import './styles/theme.css';
 
-createRoot(document.getElementById('root')!).render(<StrictMode><AuthProvider><CartProvider><App /></CartProvider></AuthProvider></StrictMode>);
+createRoot(document.getElementById('root')!).render(<StrictMode><ThemeProvider><AuthProvider><CartProvider><App /></CartProvider></AuthProvider></ThemeProvider></StrictMode>);
