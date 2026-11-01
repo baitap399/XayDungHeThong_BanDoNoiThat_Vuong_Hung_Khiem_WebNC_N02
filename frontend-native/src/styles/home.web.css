@@ -1,0 +1,19 @@
+#home-category-card {
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 240ms cubic-bezier(.2, .75, .25, 1), box-shadow 240ms ease, border-color 180ms ease;
+  will-change: transform;
+}
+
+#home-category-card:hover,
+#home-category-card:focus-visible {
+  transform: scale(1.045);
+  box-shadow: 0 10px 24px rgb(16 42 67 / 14%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #home-category-card {
+    transition: none;
+    will-change: auto;
+  }
+}
