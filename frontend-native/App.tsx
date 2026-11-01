@@ -155,7 +155,7 @@ function TrustBar({ compact }: { compact: boolean }) {
 
 function CategoryCard({ name, sub, image, style }: { name: string; sub: string; image: string; style: ViewStyle }) {
   const category = name === 'Robot hút bụi' ? 'Thiết bị gia dụng thông minh' : name;
-  return <Pressable accessibilityRole="link" accessibilityLabel={`Xem ${name}`} onPress={() => openHomeLink(`/products?category=${encodeURIComponent(category)}`)} style={[styles.categoryCard, style]}><Image source={{ uri: image }} resizeMode="cover" style={styles.categoryImage} /><View style={styles.categoryCopy}><Text style={styles.categoryName}>{name}</Text><Text numberOfLines={1} style={styles.categorySub}>{sub}</Text></View></Pressable>;
+  return <HoverPressable nativeID="home-category-card" accessibilityRole="link" accessibilityLabel={`Xem ${name}`} onPress={() => openHomeLink(`/products?category=${encodeURIComponent(category)}`)} style={[styles.categoryCard, style]} hoverStyle={styles.categoryCardHover}><Image source={{ uri: image }} resizeMode="cover" style={styles.categoryImage} /><View style={styles.categoryCopy}><Text style={styles.categoryName}>{name}</Text><Text numberOfLines={1} style={styles.categorySub}>{sub}</Text></View></HoverPressable>;
 }
 
 function FlashSale({ compact, promotion, loading, error, onRetry }: { compact: boolean; promotion: { event: PromotionEvent | null; serverTime: string; receivedAt: number } | null; loading: boolean; error: boolean; onRetry: () => void }) {
@@ -276,7 +276,8 @@ const styles = StyleSheet.create(withTypography({
   trustCopy: { flex: 1 },
   trustTitle: { color: colors.ink, fontSize: 12, lineHeight: 18, fontWeight: '700' },
   trustSub: { color: colors.muted, fontSize: 11, marginTop: 1 },
-  categoryCard: { minWidth: 150, borderRadius: 14, overflow: 'hidden', backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line },
+  categoryCard: { minWidth: 150, borderRadius: 14, overflow: 'hidden', backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, zIndex: 0 },
+  categoryCardHover: { borderColor: colors.brand, zIndex: 2, elevation: 4 },
   categoryImage: { width: '100%', height: 118, backgroundColor: colors.lineSoft },
   categoryCopy: { padding: 10, alignItems: 'center' },
   categoryName: { color: colors.ink, fontSize: 12, fontWeight: '900', textAlign: 'center' },
