@@ -15,7 +15,7 @@ const frontend = readdirSync(join(__dirname, 'frontend'))
   .filter(file => file.endsWith('.test.mjs')).sort().map(file => join(__dirname, 'frontend', file));
 const group = process.argv[3];
 const select = file => !group || (group === 'chat'
-  ? /(?:chat\.spec|shopping\.spec|user-actions\.spec|chat-stream\.test)\./.test(file)
+  ? /(?:chat\.spec|shopping\.spec|user-actions\.spec)\./.test(file)
   : basename(file).startsWith(group + '.') || basename(file).startsWith(group + '-'));
 const runs = [];
 for (const [name, files, extra] of [
@@ -46,12 +46,13 @@ for (const [name, files, extra] of [
   console.log(JSON.stringify(summary));
 }
 const builds = [];
-if (!process.argv[2]) for (const name of ['backend', 'frontend']) {
+// frontend-native (Expo) không có script build, nên kiểm tra kiểu bằng typecheck.
+if (!process.argv[2]) for (const [name, script] of [['backend', 'build'], ['frontend-native', 'typecheck']]) {
   const result = spawnSync(process.platform === 'win32' ? process.env.ComSpec : 'npm',
-    process.platform === 'win32' ? ['/d', '/s', '/c', 'npm.cmd run build'] : ['run', 'build'],
+    process.platform === 'win32' ? ['/d', '/s', '/c', `npm.cmd run ${script}`] : ['run', script],
     { cwd: join(root, name), encoding: 'utf8', timeout: 180000, maxBuffer: 16 * 1024 * 1024 });
   writeFileSync(join(output, name + '-build.txt'), (result.stdout ?? '') + (result.stderr ?? ''));
-  const build = { name, command: 'npm run build', exitCode: result.status, error: result.error?.code };
+  const build = { name, command: `npm run ${script}`, exitCode: result.status, error: result.error?.code };
   builds.push(build); console.log(JSON.stringify(build));
 }
 const npm = spawnSync(process.platform === 'win32' ? process.env.ComSpec : 'npm',
