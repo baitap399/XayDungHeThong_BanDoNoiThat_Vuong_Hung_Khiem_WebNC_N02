@@ -204,7 +204,7 @@ export const accountApi = {
 };
 
 export const adminApi = {
-  dashboard: () => request<DashboardData>('/admin/dashboard'),
+  dashboard: (end?: string) => request<DashboardData>(`/admin/dashboard${end ? `?end=${encodeURIComponent(end)}` : ''}`),
   revenue: (signal?: AbortSignal) => request<RevenueRow[]>('/admin/revenue', { signal }),
   users: (signal?: AbortSignal) => request<AdminUser[]>('/admin/users', { signal }),
 };

@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import { adminBarHeight, adminDayLabel, compactAdminMoney } from '../adminDashboard.mjs';
+import { adminBarHeight, adminDayLabel, adminIsoDay, compactAdminMoney, fillAdminWeek, shiftAdminDay } from '../adminDashboard.mjs';
 import { adminApi, formatVnd } from '../api';
 import { AdminLayout } from '../components/admin/AdminLayout';
 import { useStore } from '../store';
@@ -29,20 +29,22 @@ export default function AdminDashboardScreen() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const today = adminIsoDay();
+  const [end, setEnd] = useState(today);
 
   const load = useCallback(async () => {
     if (user?.role !== 'ADMIN') return;
     setLoading(true);
     setError('');
     try {
-      setData(await adminApi.dashboard());
+      setData(await adminApi.dashboard(end));
     } catch (failure) {
       setData(null);
       setError(failure instanceof Error ? failure.message : 'Không thể tải dữ liệu Dashboard.');
     } finally {
       setLoading(false);
     }
-  }, [user?.role]);
+  }, [user?.role, end]);
 
   useEffect(() => {
     if (!authReady) return;
@@ -59,12 +61,14 @@ export default function AdminDashboardScreen() {
     <StatusBar style="light" />
     <ScrollView style={styles.scroll} contentContainerStyle={[styles.content, compact && styles.contentCompact]}>
       <View style={styles.pageHeading}><View><Text style={styles.eyebrow}>ADMIN OVERVIEW</Text><Text style={[styles.title, compact && styles.titleCompact]}>Dashboard</Text><Text style={styles.subtitle}>Theo dõi hoạt động kinh doanh từ dữ liệu hệ thống hiện tại.</Text></View><Pressable accessibilityRole="button" disabled={loading} onPress={() => void load()} style={[styles.refreshButton, loading && styles.disabled]}>{loading ? <ActivityIndicator size="small" color={colors.white} /> : <Ionicons name="refresh" size={17} color={colors.white} />}<Text style={styles.refreshText}>Làm mới</Text></Pressable></View>
-      {loading ? <StatePanel loading title="Đang tải Dashboard" message="Hệ thống đang tổng hợp dữ liệu quản trị." /> : error || !data ? <StatePanel title="Không thể tải Dashboard" message={error || 'Không có dữ liệu trả về.'} action="Thử lại" onPress={() => void load()} /> : <DashboardContent data={data} compact={compact} medium={medium} stackCharts={stackCharts} />}
+      {loading ? <StatePanel loading title="Đang tải Dashboard" message="Hệ thống đang tổng hợp dữ liệu quản trị." /> : error || !data ? <StatePanel title="Không thể tải Dashboard" message={error || 'Không có dữ liệu trả về.'} action="Thử lại" onPress={() => void load()} /> : <DashboardContent data={data} compact={compact} medium={medium} stackCharts={stackCharts} end={end} today={today} onEnd={setEnd} />}
     </ScrollView>
   </AdminLayout>;
 }
 
-function DashboardContent({ data, compact, medium, stackCharts }: { data: DashboardData; compact: boolean; medium: boolean; stackCharts: boolean }) {
+function DashboardContent({ data, compact, medium, stackCharts, end, today, onEnd }: { data: DashboardData; compact: boolean; medium: boolean; stackCharts: boolean; end: string; today: string; onEnd: (day: string) => void }) {
+  const atToday = end >= today;
+  const nextEnd = shiftAdminDay(end, 7) > today ? today : shiftAdminDay(end, 7);
   const kpis = [
     ['cash-outline', 'Giá trị đơn hàng', formatVnd(Number(data.revenue) || 0)],
     ['receipt-outline', 'Tổng đơn hàng', String(data.orders)],
@@ -74,7 +78,13 @@ function DashboardContent({ data, compact, medium, stackCharts }: { data: Dashbo
   ] as const;
   return <View style={styles.dashboard}>
     <View style={styles.kpiGrid}>{kpis.map(([icon, label, value]) => <View key={label} style={[styles.kpiCard, compact ? styles.kpiCompact : medium ? styles.kpiNarrow : styles.kpiWide]}><View style={styles.kpiIcon}><Ionicons name={icon} size={21} color={colors.accent} /></View><Text style={styles.kpiLabel}>{label}</Text><Text numberOfLines={1} adjustsFontSizeToFit style={styles.kpiValue}>{value}</Text></View>)}</View>
-    <View style={[styles.chartGrid, stackCharts && styles.chartGridNarrow]}><ChartPanel title="Doanh thu 7 ngày" icon="trending-up-outline" rows={data.chartRevenueByDay} currency /><ChartPanel title="Đơn hàng 7 ngày" icon="bar-chart-outline" rows={data.chartOrdersByDay} /></View>
+    <View style={styles.rangeBar}>
+      <Pressable accessibilityRole="button" onPress={() => onEnd(shiftAdminDay(end, -7))} style={styles.rangeButton}><Ionicons name="chevron-back" size={14} color={colors.accent} /><Text style={styles.rangeButtonText}>7 ngày trước</Text></Pressable>
+      <Text style={styles.rangeLabel}>{adminDayLabel(shiftAdminDay(end, -6))} – {adminDayLabel(end)}/{end.slice(0, 4)}</Text>
+      <Pressable accessibilityRole="button" disabled={atToday} onPress={() => onEnd(nextEnd)} style={[styles.rangeButton, atToday && styles.disabled]}><Text style={styles.rangeButtonText}>7 ngày sau</Text><Ionicons name="chevron-forward" size={14} color={colors.accent} /></Pressable>
+      {!atToday && <Pressable accessibilityRole="button" onPress={() => onEnd(today)} style={styles.rangeButton}><Text style={styles.rangeButtonText}>Hôm nay</Text></Pressable>}
+    </View>
+    <View style={[styles.chartGrid, stackCharts && styles.chartGridNarrow]}><ChartPanel title="Doanh thu 7 ngày" icon="trending-up-outline" rows={fillAdminWeek(data.chartRevenueByDay, end)} currency /><ChartPanel title="Đơn hàng 7 ngày" icon="bar-chart-outline" rows={fillAdminWeek(data.chartOrdersByDay, end)} /></View>
     <RecentOrders orders={data.recentOrders ?? []} compact={compact} />
   </View>;
 }
@@ -122,6 +132,10 @@ const styles = StyleSheet.create(withTypography({
   kpiIcon: { width: 38, height: 38, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF3F7' },
   kpiLabel: { color: colors.muted, fontSize: 9, fontWeight: '800', letterSpacing: .7, textTransform: 'uppercase', marginTop: 12 },
   kpiValue: { color: colors.ink, fontSize: 20, lineHeight: 27, fontWeight: '800', marginTop: 4 },
+  rangeBar: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 10 },
+  rangeButton: { minHeight: 34, paddingHorizontal: 11, borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line },
+  rangeButtonText: { color: colors.accent, fontSize: 10, fontWeight: '800' },
+  rangeLabel: { color: colors.ink, fontSize: 11, fontWeight: '800' },
   chartGrid: { flexDirection: 'row', alignItems: 'stretch', gap: 18 },
   chartGridNarrow: { flexDirection: 'column' },
   panel: { flex: 1, minWidth: 0, padding: 18, borderRadius: 8, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, boxShadow: '0 12px 32px rgba(28,43,52,.08)' },

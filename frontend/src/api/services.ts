@@ -69,7 +69,7 @@ export const orderApi = {
   detail: (id: number) => api.get<Order>(`/orders/${id}`),
   adminList: () => api.get<Order[]>('/admin/orders'),
   adminUpdateStatus: (id: number, status: Order['status']) => api.patch<Order>(`/admin/orders/${id}/status`, { status }),
-  dashboard: () => api.get<DashboardData>('/admin/dashboard'),
+  dashboard: (end?: string) => api.get<DashboardData>('/admin/dashboard', { params: { end } }),
   revenue: () => api.get<Array<{ period: string; orders: number; revenue: number }>>('/admin/revenue'),
   users: () => api.get<User[]>('/admin/users'),
 };

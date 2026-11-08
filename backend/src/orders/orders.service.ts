@@ -228,7 +228,13 @@ export class OrdersService {
     }));
   }
  
-  async dashboardSummary() {
+  async dashboardSummary(end?: string) {
+    if (end !== undefined && (!/^\d{4}-\d{2}-\d{2}$/.test(end) || Number.isNaN(Date.parse(end)))) {
+      throw new BadRequestException('Ngày kết thúc không hợp lệ (định dạng YYYY-MM-DD)');
+    }
+    // Biểu đồ luôn 7 ngày, kết thúc ở ngày `end` (mặc định hôm nay theo giờ DB).
+    const endDay = end ? 'DATE(:end)' : 'CURDATE()';
+    const range = `o.created_at >= DATE_SUB(${endDay}, INTERVAL 6 DAY) AND o.created_at < DATE_ADD(${endDay}, INTERVAL 1 DAY)`;
     const orderValue = await this.orders
       .createQueryBuilder('o')
       .select('COALESCE(SUM(o.total_amount), 0)', 'revenue')
@@ -245,7 +251,7 @@ export class OrdersService {
         .select("DATE_FORMAT(o.created_at, '%Y-%m-%d')", 'day')
         .addSelect('COALESCE(SUM(o.total_amount), 0)', 'value')
         .where('o.status != :cancelled', { cancelled: OrderStatus.CANCELLED })
-        .andWhere('o.created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
+        .andWhere(range, { end })
         .groupBy("DATE_FORMAT(o.created_at, '%Y-%m-%d')")
         .orderBy("DATE_FORMAT(o.created_at, '%Y-%m-%d')", 'ASC')
         .getRawMany<{ day: string; value: string }>(),
@@ -254,7 +260,7 @@ export class OrdersService {
         .select("DATE_FORMAT(o.created_at, '%Y-%m-%d')", 'day')
         .addSelect('COUNT(o.id)', 'value')
         .where('o.status != :cancelled', { cancelled: OrderStatus.CANCELLED })
-        .andWhere('o.created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
+        .andWhere(range, { end })
         .groupBy("DATE_FORMAT(o.created_at, '%Y-%m-%d')")
         .orderBy("DATE_FORMAT(o.created_at, '%Y-%m-%d')", 'ASC')
         .getRawMany<{ day: string; value: string }>(),

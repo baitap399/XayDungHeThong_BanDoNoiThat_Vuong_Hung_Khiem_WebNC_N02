@@ -12,8 +12,8 @@ export class AdminService {
     private readonly orders: OrdersService,
   ) {}
 
-  dashboard() {
-    return this.orders.dashboardSummary();
+  dashboard(end?: string) {
+    return this.orders.dashboardSummary(end);
   }
 
   revenue() {

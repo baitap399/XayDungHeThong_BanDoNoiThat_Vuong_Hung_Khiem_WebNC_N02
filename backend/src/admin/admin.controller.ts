@@ -1,5 +1,5 @@
 // file khai báo các api endpoint của chức năng admin và nhận request từ frontend.
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -12,8 +12,8 @@ export class AdminController {
   constructor(private readonly admin: AdminService) {}
 
   @Get('dashboard')
-  dashboard() {
-    return this.admin.dashboard();
+  dashboard(@Query('end') end?: string) {
+    return this.admin.dashboard(end);
   }
 
   @Get('revenue')

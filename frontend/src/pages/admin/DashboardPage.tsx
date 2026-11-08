@@ -11,13 +11,19 @@ type ChartKind = 'revenue' | 'orders';
 const REVENUE_COLORS = ['#4e73df','#6a8ff5','#85abff','#3259c4','#2048b3','#90acff','#b8c9ff'];
 const ORDER_COLORS = ['#1bbf8f','#34d9a8','#52edc0','#0ea877','#0b8c64','#67f2cb','#9ff8e0'];
 
-function lastSevenDays() {
+const isoDate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+function shiftDays(iso: string, days: number) {
+  const d = new Date(`${iso}T00:00:00`);
+  d.setDate(d.getDate() + days);
+  return isoDate(d);
+}
+
+function sevenDaysEnding(end: string) {
   const result: string[] = [];
-  const now = new Date();
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(now.getDate() - i);
-    result.push(`${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`);
+    const [, m, d] = shiftDays(end, -i).split('-');
+    result.push(`${d}/${m}`);
   }
   return result;
 }
@@ -104,9 +110,11 @@ function DoughnutChart({ values, colors }: { values: number[]; colors: string[] 
 export function AdminDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState(false);
-  useEffect(() => { orderApi.dashboard().then(r => setData(r.data)).catch(() => setError(true)); }, []);
+  const today = isoDate(new Date());
+  const [end, setEnd] = useState(today);
+  useEffect(() => { orderApi.dashboard(end).then(r => setData(r.data)).catch(() => setError(true)); }, [end]);
 
-  const labels = useMemo(() => lastSevenDays(), []);
+  const labels = useMemo(() => sevenDaysEnding(end), [end]);
   if (error) return <div className="admin-empty">Không tải được dữ liệu dashboard. Vui lòng kiểm tra backend rồi tải lại trang.</div>;
   if (!data) return <div className="admin-empty">Đang tải dashboard...</div>;
 
@@ -132,6 +140,12 @@ export function AdminDashboardPage() {
       <div className="admin-stat-card"><Clock3/><div><span>Chờ xử lý</span><strong>{data.pendingOrders}</strong></div></div>
       <div className="admin-stat-card"><Boxes/><div><span>Sản phẩm</span><strong>{data.products}</strong></div></div>
       <div className="admin-stat-card"><Users/><div><span>Người dùng</span><strong>{data.users}</strong></div></div>
+    </div>
+    <div className="chart-type-btns" role="group" aria-label="Chọn khoảng thời gian biểu đồ" style={{ alignItems: 'center', marginBottom: 12 }}>
+      <button type="button" className="chart-type-btn" onClick={() => setEnd(shiftDays(end, -7))}>‹ 7 ngày trước</button>
+      <label>Đến ngày <input type="date" value={end} max={today} onChange={e => e.target.value && setEnd(e.target.value)} /></label>
+      <button type="button" className="chart-type-btn" disabled={end >= today} onClick={() => setEnd(end < shiftDays(today, -7) ? shiftDays(end, 7) : today)}>7 ngày sau ›</button>
+      {end !== today && <button type="button" className="chart-type-btn" onClick={() => setEnd(today)}>Hôm nay</button>}
     </div>
     <div className="dashboard-grid">
       <ChartPanel kind="revenue" labels={labels} values={revenues}/>
