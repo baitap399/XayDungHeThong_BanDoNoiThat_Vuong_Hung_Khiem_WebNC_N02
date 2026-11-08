@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import { adminBarHeight, adminDayLabel, compactAdminMoney } from '../adminDashboard.mjs';
+import { adminDayLabel, compactAdminMoney } from '../adminDashboard.mjs';
 import { adminApi, formatVnd } from '../api';
 import { AdminLayout } from '../components/admin/AdminLayout';
 import { useStore } from '../store';
@@ -30,17 +30,15 @@ export default function AdminDashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const load = useCallback(async () => {
+  const load = useCallback(async ({ quiet = false }: { quiet?: boolean } = {}) => {
     if (user?.role !== 'ADMIN') return;
-    setLoading(true);
-    setError('');
+    if (!quiet) { setLoading(true); setError(''); }
     try {
       setData(await adminApi.dashboard());
     } catch (failure) {
-      setData(null);
-      setError(failure instanceof Error ? failure.message : 'Không thể tải dữ liệu Dashboard.');
+      if (!quiet) { setData(null); setError(failure instanceof Error ? failure.message : 'Không thể tải dữ liệu Dashboard.'); }
     } finally {
-      setLoading(false);
+      if (!quiet) setLoading(false);
     }
   }, [user?.role]);
 
@@ -51,6 +49,11 @@ export default function AdminDashboardScreen() {
   }, [authReady, router, user]);
 
   useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    if (!authReady || user?.role !== 'ADMIN') return;
+    const timer = setInterval(() => { void load({ quiet: true }); }, 12_000);
+    return () => clearInterval(timer);
+  }, [authReady, load, user?.role]);
 
   if (!authReady || !user || user.role !== 'ADMIN') return <AdminGateState />;
 
@@ -74,14 +77,42 @@ function DashboardContent({ data, compact, medium, stackCharts }: { data: Dashbo
   ] as const;
   return <View style={styles.dashboard}>
     <View style={styles.kpiGrid}>{kpis.map(([icon, label, value]) => <View key={label} style={[styles.kpiCard, compact ? styles.kpiCompact : medium ? styles.kpiNarrow : styles.kpiWide]}><View style={styles.kpiIcon}><Ionicons name={icon} size={21} color={colors.accent} /></View><Text style={styles.kpiLabel}>{label}</Text><Text numberOfLines={1} adjustsFontSizeToFit style={styles.kpiValue}>{value}</Text></View>)}</View>
-    <View style={[styles.chartGrid, stackCharts && styles.chartGridNarrow]}><ChartPanel title="Doanh thu 7 ngày" icon="trending-up-outline" rows={data.chartRevenueByDay} currency /><ChartPanel title="Đơn hàng 7 ngày" icon="bar-chart-outline" rows={data.chartOrdersByDay} /></View>
+    <View style={[styles.chartGrid, stackCharts && styles.chartGridNarrow]}><ChartPanel title="Doanh thu 7 ngày" icon="trending-up-outline" rows={completeWeek(data.chartRevenueByDay)} currency /><ChartPanel title="Đơn hàng 7 ngày" icon="bar-chart-outline" rows={completeWeek(data.chartOrdersByDay)} /></View>
     <RecentOrders orders={data.recentOrders ?? []} compact={compact} />
   </View>;
 }
 
+function completeWeek(rows: Array<{ day: string; value: number }>) {
+  const values = new Map(rows.map(row => [row.day.slice(0, 10), Number(row.value) || 0]));
+  const today = new Date();
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6 + index);
+    const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    return { day, value: values.get(day) ?? 0 };
+  });
+}
+
 function ChartPanel({ title, icon, rows, currency = false }: { title: string; icon: 'trending-up-outline' | 'bar-chart-outline'; rows: Array<{ day: string; value: number }>; currency?: boolean }) {
   const max = useMemo(() => Math.max(0, ...rows.map(row => Number(row.value) || 0)), [rows]);
-  return <View style={styles.panel}><View style={styles.panelHeading}><View style={styles.panelIcon}><Ionicons name={icon} size={18} color={colors.accent} /></View><View><Text style={styles.panelTitle}>{title}</Text><Text style={styles.panelSubtitle}>{currency ? 'Giá trị đơn không bị hủy' : 'Số đơn không bị hủy theo ngày'}</Text></View></View>{rows.length ? <View style={styles.chart}>{rows.map(row => <View key={row.day} style={styles.barColumn}><Text numberOfLines={1} style={styles.barValue}>{currency ? compactAdminMoney(row.value) : row.value}</Text><View style={styles.barTrack}><View style={[styles.bar, { height: adminBarHeight(row.value, max) }]} /></View><Text style={styles.barLabel}>{adminDayLabel(row.day)}</Text></View>)}</View> : <View style={styles.chartEmpty}><Ionicons name="analytics-outline" size={27} color={colors.subtle} /><Text style={styles.emptyText}>Chưa có dữ liệu trong 7 ngày gần đây.</Text></View>}</View>;
+  const scaleMax = chartScaleMax(max);
+  const ticks = Array.from({ length: 5 }, (_, index) => scaleMax * (4 - index) / 4);
+  return <View style={styles.panel}>
+    <View style={styles.panelHeading}><View style={styles.panelIcon}><Ionicons name={icon} size={18} color={colors.accent} /></View><View><Text style={styles.panelTitle}>{title}</Text><Text style={styles.panelSubtitle}>{currency ? 'Doanh thu không bị hủy · đơn vị ₫' : 'Số đơn không bị hủy theo ngày'}</Text></View></View>
+    <View style={styles.axisChart}><View style={styles.plotRow}>
+      <View style={styles.yAxis}>{ticks.map((tick, index) => <Text key={index} style={styles.axisTick}>{currency ? compactAdminMoney(tick) : Math.round(tick)}</Text>)}</View>
+      <View style={styles.plot}>{ticks.map((_, index) => <View key={index} style={[styles.gridLine, { top: `${index * 25}%` }]} />)}
+        <View style={styles.plotBars}>{rows.map(row => <View key={row.day} style={styles.barColumn}><View style={styles.barSlot}><View style={[styles.bar, { height: `${row.value > 0 ? Math.max(2, row.value / scaleMax * 100) : 0}%` }]} /></View></View>)}</View>
+      </View>
+    </View><View style={styles.xAxis}><View style={styles.axisSpacer} />{rows.map(row => <Text key={row.day} numberOfLines={1} style={styles.barLabel}>{adminDayLabel(row.day)}</Text>)}</View></View>
+  </View>;
+}
+
+function chartScaleMax(value: number) {
+  if (value <= 0) return 4;
+  const magnitude = 10 ** Math.floor(Math.log10(value));
+  const normalized = value / magnitude;
+  const step = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 4 ? 4 : normalized <= 8 ? 8 : 10;
+  return step * magnitude;
 }
 
 function RecentOrders({ orders, compact }: { orders: Order[]; compact: boolean }) {
@@ -129,12 +160,19 @@ const styles = StyleSheet.create(withTypography({
   panelIcon: { width: 35, height: 35, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF3F7' },
   panelTitle: { color: colors.ink, fontSize: 13, fontWeight: '800' },
   panelSubtitle: { color: colors.muted, fontSize: 9, marginTop: 2 },
-  chart: { height: 165, flexDirection: 'row', alignItems: 'flex-end', gap: 5 },
-  barColumn: { flex: 1, height: 165, minWidth: 0, alignItems: 'center', justifyContent: 'flex-end' },
-  barValue: { color: colors.muted, fontSize: 8, marginBottom: 4, maxWidth: '100%' },
-  barTrack: { height: 116, width: '64%', minWidth: 12, maxWidth: 36, justifyContent: 'flex-end', borderRadius: 5, overflow: 'hidden', backgroundColor: colors.lineSoft },
-  bar: { width: '100%', borderRadius: 5, backgroundColor: colors.accent },
-  barLabel: { color: colors.subtle, fontSize: 8, marginTop: 6 },
+  axisChart: { height: 218 },
+  plotRow: { height: 178, flexDirection: 'row', gap: 8 },
+  yAxis: { width: 44, height: 164, justifyContent: 'space-between', alignItems: 'flex-end', paddingRight: 2 },
+  axisTick: { color: colors.muted, fontSize: 8, fontWeight: '600', lineHeight: 12 },
+  plot: { flex: 1, height: 164, position: 'relative', borderLeftWidth: 1, borderBottomWidth: 1, borderColor: '#AFC1CA' },
+  gridLine: { position: 'absolute', left: 0, right: 0, height: 1, backgroundColor: '#E8EEF1' },
+  plotBars: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, flexDirection: 'row', alignItems: 'stretch', gap: 8 },
+  barColumn: { flex: 1, minWidth: 0, alignItems: 'center', justifyContent: 'flex-end' },
+  barSlot: { width: '62%', minWidth: 10, maxWidth: 34, height: '100%', justifyContent: 'flex-end', alignItems: 'center' },
+  bar: { width: '100%', borderTopLeftRadius: 5, borderTopRightRadius: 5, backgroundColor: colors.accent },
+  xAxis: { flexDirection: 'row', gap: 8, marginTop: 7 },
+  axisSpacer: { width: 52 },
+  barLabel: { flex: 1, color: colors.muted, fontSize: 8, fontWeight: '600', textAlign: 'center' },
   chartEmpty: { minHeight: 150, alignItems: 'center', justifyContent: 'center', gap: 8 },
   emptyText: { color: colors.muted, fontSize: 10, textAlign: 'center' },
   orderList: { borderTopWidth: 1, borderTopColor: colors.line },
