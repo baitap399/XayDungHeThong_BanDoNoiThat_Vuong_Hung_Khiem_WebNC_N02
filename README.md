@@ -60,31 +60,24 @@ Gia dụng Việt mô phỏng quy trình mua sắm trực tuyến từ lúc khá
 - MySQL tương thích, cùng thông tin máy chủ, tài khoản và cơ sở dữ liệu.
 - Git để lấy mã nguồn (nếu chưa có dự án trên máy).
 
-## Khởi động dự án và truy cập các giao diện
+## Hướng dẫn chạy web bằng Terminal
 
-Dự án có một backend và hai giao diện:
+Làm theo các bước dưới đây. Mở Terminal/PowerShell tại **thư mục chứa file README.md**. Cần bật MySQL trước khi chạy Backend.
 
-- **Frontend Native (Expo Web)** là giao diện hiện có trong checkout này, thường chạy tại `http://localhost:8081`.
-- **Frontend Vite** là website React cũ, nếu có mã nguồn `frontend/` thì chạy tại `http://localhost:5173`; một số màn hình Expo chuyển tiếp sang website này. Checkout hiện tại không có thư mục `frontend/`, nên chỉ chạy được Vite nếu bạn có bản mã nguồn đó.
-- **Backend NestJS** cung cấp API tại `http://localhost:3000`; đường dẫn API bắt đầu bằng `/api`.
+### Bước 1: Chuẩn bị Backend (chỉ làm lần đầu)
 
-Cần cài Node.js 22 trở lên, npm và MySQL. Mở các terminal riêng tại thư mục dự án (thư mục chứa README.md) và để backend cùng giao diện cần dùng chạy đồng thời.
-
-### 1. Chuẩn bị cơ sở dữ liệu và backend
-
-Tạo/nạp database bằng `database/schema.sql` trong MySQL Workbench (Server → Data Import → Import from Self-Contained File). Nếu dùng Git Bash, từ thư mục gốc dự án có thể chạy:
-
-```bash
-mysql -u root -p < database/schema.sql
-```
-
-Tạo `backend/.env` từ `backend/.env.example`, rồi điền thông tin MySQL và `JWT_SECRET`. Nếu dùng MySQL local, kiểm tra `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD` và `DB_NAME`. Nếu dùng dịch vụ MySQL yêu cầu SSL, cấu hình CA certificate theo ghi chú trong `backend/.env.example` và `backend/src/database/ssl.ts`.
-
-Cài thư viện và cập nhật các bảng mở rộng (chạy khi thiết lập database mới hoặc khi schema cần cập nhật):
+Tạo file cấu hình Backend:
 
 ```powershell
 cd backend
 Copy-Item .env.example .env
+```
+
+Mở `backend/.env`, điền thông tin MySQL (`DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`) và đặt `JWT_SECRET`. Nếu đã có file `.env` thì không cần chép đè; chỉ kiểm tra các thông tin bên trong.
+
+Nếu đây là database mới, nạp `database/schema.sql` bằng MySQL Workbench. Sau đó, trong Terminal ở thư mục `backend`, cài thư viện và cập nhật các bảng:
+
+```powershell
 npm install
 npm run db:auth-profile
 npm run db:chatbot
@@ -93,24 +86,35 @@ npm run db:promotions
 npm run db:checkout
 ```
 
-Khởi động backend trong terminal này:
+Các lệnh cập nhật database chỉ cần chạy khi cài đặt lần đầu hoặc khi dự án yêu cầu cập nhật schema.
+
+### Bước 2: Mở Backend
+
+Trong Terminal đang ở thư mục `backend`, chạy:
 
 ```powershell
 npm run start:dev
 ```
 
-Backend sẵn sàng tại `http://localhost:3000`; API dùng tiền tố `/api` (ví dụ `http://localhost:3000/api`). Giữ terminal này mở.
+Để Terminal này mở. Backend chạy tại `http://localhost:3000`. API sản phẩm có thể xem tại `http://localhost:3000/api/products`. Backend là nơi cung cấp dữ liệu cho giao diện, không phải trang mua sắm.
 
-### 2. Chạy website Frontend Vite
+### Bước 3: Mở giao diện Frontend Native
 
-Nếu bạn có mã nguồn thư mục `frontend/`, mở terminal mới tại thư mục dự án. Tạo `frontend/.env` nếu chưa có:
+Mở **Terminal/PowerShell thứ hai** tại thư mục chứa README.md, rồi chạy lần lượt:
 
-```env
-VITE_API_URL=http://localhost:3000/api
-VITE_ALLOWED_HOSTS=
+```powershell
+cd frontend-native
+npm install
+npm run web
 ```
 
-Cài thư viện và chạy website:
+`npm install` chỉ cần chạy lần đầu hoặc sau khi cập nhật thư viện. Khi Expo chạy xong, mở địa chỉ được in trong Terminal, thường là **http://localhost:8081**. Giữ cả hai Terminal (Backend và Expo) mở trong lúc sử dụng web.
+
+Trên trình duyệt, Expo tự chuyển tiếp yêu cầu `/api` đến Backend ở cổng `3000`. Nếu trang không tải được dữ liệu, kiểm tra MySQL và xem Terminal Backend có báo lỗi không.
+
+### Nếu có mã nguồn Frontend Vite
+
+Checkout hiện tại không có thư mục `frontend/`, nên dùng Frontend Native ở Bước 3. Nếu bạn có bản mã nguồn khác có thư mục `frontend/`, hãy mở Terminal thứ ba tại thư mục chứa README.md và chạy:
 
 ```powershell
 cd frontend
@@ -118,32 +122,28 @@ npm install
 npm run dev
 ```
 
-Mở URL Vite được in trong terminal, mặc định là **http://localhost:5173**. Đây là giao diện đầy đủ của website cũ. Nếu checkout không có thư mục `frontend/`, bỏ qua bước này; các màn hình Expo chuyển tiếp cần website Vite sẽ chưa mở được.
+Mở địa chỉ Vite in trong Terminal (thường **http://localhost:5173**). Website Vite và Backend phải cùng chạy. Một số trang chưa chuyển đổi của Frontend Native sẽ chuyển sang website Vite này.
 
-### 3. Chạy giao diện Frontend Native (Expo Web)
+### Mỗi lần mở web sau lần đầu
 
-Mở terminal mới tại thư mục dự án, rồi chạy:
+1. Bật MySQL.
+2. Mở Terminal thứ nhất, chạy Backend:
 
-```powershell
-cd frontend-native
-Copy-Item .env.example .env
-npm install
-npm run web
-```
+   ```powershell
+   cd backend
+   npm run start:dev
+   ```
 
-Mở URL Expo Web được in trong terminal (thường là **http://localhost:8081**). Trang chủ Expo dùng API qua proxy dev đến backend ở `http://localhost:3000`. Các màn hình chưa chuyển đổi sẽ được mở trên website Vite; để sử dụng các luồng đó, cần có và chạy Vite ở cổng `5173`.
+3. Mở Terminal thứ hai, chạy giao diện:
 
-Nếu truy cập từ Android Emulator hoặc điện thoại thật, `localhost` không trỏ đến máy tính đang chạy backend. Cập nhật `EXPO_PUBLIC_API_URL` và `EXPO_PUBLIC_API_ORIGIN` trong `frontend-native/.env` theo hướng dẫn trong `frontend-native/README.md` (Android Emulator thường dùng `http://10.0.2.2:3000`; điện thoại thật dùng IP LAN của máy tính hoặc backend HTTPS). Với điện thoại thật, chạy Vite bằng `npm run dev -- --host 0.0.0.0` để thiết bị trong cùng mạng có thể truy cập.
+   ```powershell
+   cd frontend-native
+   npm run web
+   ```
 
-### 4. Thứ tự truy cập nhanh
+4. Truy cập **http://localhost:8081** (hoặc URL Expo in ra trong Terminal). Dừng máy chủ bằng `Ctrl+C` trong Terminal tương ứng.
 
-1. Khởi động MySQL.
-2. Chạy backend ở cổng `3000`.
-3. Chạy frontend Vite ở cổng `5173` nếu cần website đầy đủ hoặc các trang Expo chuyển tiếp.
-4. Chạy frontend-native bằng `npm run web` nếu muốn xem giao diện Expo.
-5. Mở URL tương ứng được in ở terminal: Vite `http://localhost:5173`, Expo Web thường `http://localhost:8081`. API backend ở `http://localhost:3000/api`.
-
-Để dùng thanh toán PayOS, chatbot Gemini hoặc email OTP Resend, điền thông tin dịch vụ tương ứng trong `backend/.env`. Xem các mục biến môi trường trong `backend/.env.example` và `frontend-native/README.md` khi chạy trên thiết bị khác máy.
+Khi dùng Frontend Vite từ bản mã nguồn có thư mục `frontend/`, chạy thêm `cd frontend` rồi `npm run dev` trong một Terminal khác và mở `http://localhost:5173`.
 
 ## Tài khoản và dữ liệu trình diễn
 
