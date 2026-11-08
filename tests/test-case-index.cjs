@@ -18,8 +18,17 @@ const fixtures = {
   'products.spec.ts': ['Metadata MySQL TypeORM chưa mở kết nối; catalog/review giả lập.', 'Keyword/category chứa SQL injection; chuỗi trắng; ID 10/999; giá ưu đãi 300000 từ 500000.'],
   'promotions.spec.ts': ['DTO, migration và transaction/khóa bộ nhớ; lịch tính tương đối theo ngày chạy.', 'ID trùng, giảm sai, quá 200 món; lịch đảo/hết hạn/thiếu múi giờ/trùng; banner sai; sản phẩm không còn.'],
   'reviews.spec.ts': ['Repository mua hàng/đánh giá và migration giả lập.', 'Sao 0/6/3.5; spoof user/order; đơn của mình đã giao + đã thanh toán; sửa hai lần; tài khoản khác.'],
-  'chat-stream.test.mjs': ['Web Response/ReadableStream và đồng hồ giả của node:test.', 'UTF-8 tiếng Việt/emoji, SSE chia byte, HTTP 401, frame lỗi, abort/cancel.'],
-  'ui.test.mjs': ['TSX thật biên dịch bằng esbuild; React SSR; auth/cart fixture; Axios adapter giả lập.', 'Giá sale/zero; giỏ loading/rỗng/đủ dữ liệu; USER/ADMIN; form đăng ký/đăng nhập; token/payload/lỗi API.'],
+  'admin.spec.ts': ['OrdersService/AdminService/CouponsService với repository và QueryBuilder giả lập.', 'Liên hệ; danh sách user; voucher tri ân theo mức đơn; COD giao hàng; dashboard (kể cả ngày kết thúc cũ/sai định dạng); doanh thu tháng; sản phẩm; mã giảm giá.'],
+  'email.service.spec.ts': ['EmailService với biến môi trường SMTP tạm thời.', 'Thiếu cấu hình SMTP khi khởi tạo và khi gửi email.'],
+  'recommend.spec.ts': ['Catalog bộ nhớ và Gemini giả lập.', 'ID ngoài catalog/trùng; lý do chứa giá/khuyến mãi; câu hỏi theo nhu cầu; Gemini lỗi/rỗng; chip gợi ý.'],
+  'retry-transient-read.spec.ts': ['Hàm đọc giả lập ném lỗi kết nối tạm thời hoặc lỗi cố định.', 'Mất kết nối một lần rồi thành công; lỗi SQL cố định.'],
+  'security.spec.ts': ['Ứng dụng Nest tối thiểu với helmet; cấu hình kết nối MySQL.', 'Header bảo mật và ảnh nhúng cross-origin; DB_CA_CERT có/không có.'],
+  'throttle.spec.ts': ['Metadata decorator throttle của các controller.', 'Route đăng nhập/OTP/chat có giới hạn riêng; webhook PayOS được bỏ qua.'],
+  'upload.spec.ts': ['Cấu hình multer imageUpload.', 'Ảnh jpg/png/webp hợp lệ; file sai định dạng; tên file theo mimetype.'],
+  'chat.test.mjs': ['api.ts thật của frontend-native biên dịch bằng TypeScript; fetch giả trả phản hồi định sẵn.', 'Tin nhắn thường/hành động có productId; tiếng Việt và emoji; lỗi 400 có danh sách message; lỗi 503 không có JSON.'],
+  'ui.test.mjs': ['Component thật của frontend-native render bằng react-native-web + React SSR; store và router giả.', 'Giá sale 900000/1000000 và giá 0; hết hàng; giỏ đang tải/rỗng/có 2 sản phẩm; tài khoản USER/ADMIN vào Dashboard.'],
+  'logout.test.mjs': ['api.ts thật của frontend-native; localStorage và fetch giả.', 'Lưu token jwt-abc, gọi /auth/me, đăng xuất rồi gọi lại.'],
+  'admin-product-update.test.mjs': ['api.ts và hàm kiểm tra form sản phẩm thật của frontend-native; fetch giả.', 'Giá/tồn kho/tên không hợp lệ; lưu sản phẩm id 5 với token admin-jwt.'],
 };
 for (const run of summary.runs) {
   const events = readFileSync(join(directory, run.name + '.jsonl'), 'utf8').trim().split('\n').map(JSON.parse);

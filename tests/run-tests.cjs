@@ -15,7 +15,7 @@ const frontend = readdirSync(join(__dirname, 'frontend'))
   .filter(file => file.endsWith('.test.mjs')).sort().map(file => join(__dirname, 'frontend', file));
 const group = process.argv[3];
 const select = file => !group || (group === 'chat'
-  ? /(?:chat\.spec|shopping\.spec|user-actions\.spec)\./.test(file)
+  ? /(?:chat\.spec|shopping\.spec|user-actions\.spec|chat\.test)\./.test(file)
   : basename(file).startsWith(group + '.') || basename(file).startsWith(group + '-'));
 const runs = [];
 for (const [name, files, extra] of [
